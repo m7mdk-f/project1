@@ -1,0 +1,20 @@
+{
+  "Version": 1,
+  "Hash": "N+zS56LsIFvA203j+yFq946aeDOMI+4f/wzWf21BmMQ=",
+  "Source": "project",
+  "BasePath": "_content/project",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "project\\wwwroot",
+      "Source": "project",
+      "ContentRoot": "D:\\GitHubWork\\project1\\api\\api\\project\\wwwroot\\",
+      "BasePath": "_content/project",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [],
+  "Endpoints": []
+}
