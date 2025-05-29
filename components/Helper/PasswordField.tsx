@@ -6,9 +6,10 @@ import { MdOutlineRemoveRedEye } from "react-icons/md";
 type Props = {
   password: string;
   onChange: (value: string) => void;
+  onValidChange?: (isValid: boolean) => void;
 };
 
-const PasswordField = ({ password, onChange }: Props) => {
+const PasswordField = ({ password, onChange, onValidChange }: Props) => {
   const [show, setShow] = useState(false);
   const [strength, setStrength] = useState(0);
 
@@ -16,12 +17,16 @@ const PasswordField = ({ password, onChange }: Props) => {
     onChange(value);
 
     const rules = [/[a-z]/, /[A-Z]/, /[0-9]/, /[!@#\$%\^&\*]/, /.{8,}/];
-
     const score = rules.reduce(
       (acc, rule) => (rule.test(value) ? acc + 1 : acc),
       0
     );
+
     setStrength(score);
+
+    if (typeof onValidChange === "function") {
+      onValidChange(score >= 4);
+    }
   };
 
   const getBarColor = () => {

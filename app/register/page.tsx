@@ -5,6 +5,7 @@ import PasswordField from "@/components/Helper/PasswordField";
 import PhoneField from "@/components/Helper/PhoneField";
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
 import React, { useState } from "react";
 
 const Register = () => {
@@ -13,16 +14,50 @@ const Register = () => {
   const [phone, setPhone] = useState("");
   const [selectedCode, setSelectedCode] = useState("+966");
   const [password, setPassword] = useState("");
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // هنا تقدر تضيف منطق التسجيل مثل إرسال البيانات إلى API
-    console.log({
-      name,
-      email,
-      phone: `${selectedCode} ${phone}`,
-      password,
-    });
+
+    const formData = new FormData();
+    formData.append("FullName", name);
+    formData.append("Email", email);
+    formData.append("PhoneNumber", `${selectedCode}${phone}`);
+    formData.append("Password", password);
+    formData.append("ConfirmPass", password);
+
+    try {
+      const response = await axios.post(
+        "https://localhost:7063/Create-account",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      alert("تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.");
+      console.log(response.data);
+      window.location.href = "/login";
+    } catch (error: any) {
+      if (error.response) {
+        if (error.response.status === 409) {
+          // الايميل موجود
+          if (
+            window.confirm(
+              "هذا البريد الإلكتروني مستخدم مسبقاً. هل ترغب بتسجيل الدخول بدلًا من ذلك؟"
+            )
+          ) {
+            // تحويل المستخدم لصفحة تسجيل الدخول
+            window.location.href = "/login";
+          }
+        } else {
+          alert(`فشل التسجيل: ${JSON.stringify(error.response.data)}`);
+        }
+      } else {
+        alert("حدث خطأ أثناء الاتصال بالخادم.");
+      }
+    }
   };
 
   return (
@@ -71,12 +106,21 @@ const Register = () => {
             onCodeChange={setSelectedCode}
           />
 
-          <PasswordField password={password} onChange={setPassword} />
+          <PasswordField
+            password={password}
+            onChange={setPassword}
+            onValidChange={setIsPasswordValid}
+          />
 
           <button
             type="submit"
+            disabled={!isPasswordValid}
             style={{ padding: "10px 12px" }}
-            className="w-full cursor-pointer text-white rounded-md hover:bg-blue-600 bg-blue-500 transition duration-200"
+            className={`w-full text-white rounded-md transition duration-200 ${
+              isPasswordValid
+                ? "cursor-pointer bg-blue-500 hover:bg-blue-600"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
           >
             تسجيل
           </button>

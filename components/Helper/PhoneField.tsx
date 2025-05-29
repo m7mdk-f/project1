@@ -7,6 +7,7 @@ const countries = [
   { code: "+971", name: "الإمارات" },
   { code: "+965", name: "الكويت" },
   { code: "+1", name: "أمريكا" },
+  { code: "+970", name: "فلسطين" },
 ];
 
 type Props = {
