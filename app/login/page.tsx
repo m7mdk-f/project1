@@ -13,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [emailValid, setEmailValid] = useState(false);
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -21,6 +22,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError(null);
 
     try {
       const response = await axios.post("https://localhost:7063/Login", {
@@ -28,21 +30,27 @@ const Login = () => {
         Password: password,
       });
 
-      // افترض الـ API يرجع التوكن داخل response.data.token
       const token = response.data.token;
       if (token) {
         localStorage.setItem("authToken", token);
       }
 
-      alert("تم تسجيل الدخول بنجاح");
-
-      // توجه لصفحة رئيسية أو أخرى
-      window.location.href = "/";
+      window.location.href = "/steps"; // return after login success
     } catch (error: any) {
       if (error.response) {
-        alert(`فشل تسجيل الدخول: ${error.response.data}`);
+        const message = error.response.data;
+
+        if (typeof message === "string") {
+          if (message.includes("Error in Email or Password")) {
+            setLoginError("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+          } else {
+            setLoginError("حدث خطأ: " + message);
+          }
+        } else {
+          setLoginError("فشل تسجيل الدخول. الرجاء المحاولة لاحقاً.");
+        }
       } else {
-        alert("حدث خطأ أثناء الاتصال بالخادم.");
+        setLoginError("حدث خطأ أثناء الاتصال بالخادم.");
       }
     }
   };
@@ -79,25 +87,32 @@ const Login = () => {
           />
 
           {emailValid && (
-            <InputField
-              label="كلمة المرور"
-              type={showPassword ? "text" : "password"}
-              placeholder="ادخل كلمة المرور"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              icon={
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="cursor-pointer"
-                >
-                  {showPassword ? (
-                    <MdOutlineRemoveRedEye size={18} />
-                  ) : (
-                    <FaRegEyeSlash size={18} />
-                  )}
-                </span>
-              }
-            />
+            <>
+              <InputField
+                label="كلمة المرور"
+                type={showPassword ? "text" : "password"}
+                placeholder="ادخل كلمة المرور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={
+                  <span
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="cursor-pointer"
+                  >
+                    {showPassword ? (
+                      <MdOutlineRemoveRedEye size={18} />
+                    ) : (
+                      <FaRegEyeSlash size={18} />
+                    )}
+                  </span>
+                }
+              />
+              {loginError && (
+                <p className="text-red-500 text-sm mt-[-10px] mb-[-5px] text-right">
+                  {loginError}
+                </p>
+              )}
+            </>
           )}
 
           <button
@@ -115,7 +130,7 @@ const Login = () => {
         </form>
       </div>
 
-      <div>
+      <div className="md:block hidden">
         <ImageSlider />
       </div>
     </div>

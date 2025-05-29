@@ -15,9 +15,11 @@ const Register = () => {
   const [selectedCode, setSelectedCode] = useState("+966");
   const [password, setPassword] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisterError(null);
 
     const formData = new FormData();
     formData.append("FullName", name);
@@ -37,25 +39,20 @@ const Register = () => {
         }
       );
       alert("تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.");
-      console.log(response.data);
       window.location.href = "/login";
     } catch (error: any) {
       if (error.response) {
         if (error.response.status === 409) {
-          // الايميل موجود
-          if (
-            window.confirm(
-              "هذا البريد الإلكتروني مستخدم مسبقاً. هل ترغب بتسجيل الدخول بدلًا من ذلك؟"
-            )
-          ) {
-            // تحويل المستخدم لصفحة تسجيل الدخول
-            window.location.href = "/login";
-          }
+          setRegisterError(
+            "هذا البريد الإلكتروني مستخدم مسبقًا. حاول تسجيل الدخول."
+          );
         } else {
-          alert(`فشل التسجيل: ${JSON.stringify(error.response.data)}`);
+          setRegisterError(
+            `فشل التسجيل: ${JSON.stringify(error.response.data)}`
+          );
         }
       } else {
-        alert("حدث خطأ أثناء الاتصال بالخادم.");
+        setRegisterError("حدث خطأ أثناء الاتصال بالخادم.");
       }
     }
   };
@@ -111,6 +108,11 @@ const Register = () => {
             onChange={setPassword}
             onValidChange={setIsPasswordValid}
           />
+          {registerError && (
+            <p className="text-red-500 text-sm text-right mt-[-10px] mb-[-5px]">
+              {registerError}
+            </p>
+          )}
 
           <button
             type="submit"
