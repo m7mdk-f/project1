@@ -180,7 +180,7 @@ const Register = () => {
           <button
             type="submit"
             style={{ padding: "10px 12px" }}
-            className="w-full cursor-pointer text-white rounded-md hover:bg-blue-600 bg-blue-500 transition duration-200"
+            className="btn-primary"
           >
             تسجيل
           </button>
