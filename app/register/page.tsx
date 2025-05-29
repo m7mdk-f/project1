@@ -28,15 +28,10 @@ const Register = () => {
   );
 
   return (
-    <div
-      className="min-h-screen  lg:p-20 md:p-10 sm:p-5  bg-gray-100 flex flex-col lg:flex-row items-center justify-between gap-5"
-    >
+    <div className="min-h-screen lg:px-20 md:px-10 sm:p-5  bg-gray-100 flex flex-col lg:flex-row items-center justify-between gap-5">
       {/* نموذج التسجيل */}
-      <div className="w-full xl:max-w-xl lg:max-w-lg   p-8 rounded-lg">
-        <div
-          className="flex justify-between border border-solid border-gray-300 rounded-lg"
-          style={{ marginBottom: "30px" }}
-        >
+      <div className="w-full xl:max-w-xl lg:max-w-lg p-8 rounded-lg">
+        <div className="flex justify-between border border-solid border-gray-300 rounded-lg mb-8">
           <button className="w-1/2 text-center border-l text-gray-500">
             تسجيل الدخول
           </button>
@@ -49,11 +44,9 @@ const Register = () => {
           </Link>
         </div>
 
-        <form className="text-right flex justify-center flex-col gap-7">
+        <form className="text-right flex justify-center flex-col gap-5">
           <div>
-            <label
-              className="block text-sm text-gray-600  mb-5"
-            >
+            <label className="block text-sm text-gray-600  mb-5">
               الاسم الكريم
             </label>
             <input
@@ -88,16 +81,14 @@ const Register = () => {
             <div className="flex flex-row-reverse bg-white text-gray-600 rounded-md">
               <div
                 onClick={() => setShowCountries(!showCountries)}
-                className="cursor-pointer border-r my-2"
-                style={{ padding: "12px 10px" }}
+                className="cursor-pointer border-r my-2 py-1 px-4"
               >
                 {selectedCode}
               </div>
               <input
-                style={{ padding: "10px 12px" }}
                 type="tel"
                 placeholder="ادخل رقم الجوال"
-                className="flex-1 outline-0 border-0 bg-transparent px-4 py-2 text-right"
+                className="flex-1 px-4 outline-0 border-0 bg-transparent text-right"
               />
             </div>
 
@@ -150,7 +141,11 @@ const Register = () => {
                 className="absolute left-3 top-12 transform -translate-y-1/2 cursor-pointer text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <MdOutlineRemoveRedEye size={18} /> : <FaRegEyeSlash size={18} />}
+                {showPassword ? (
+                  <MdOutlineRemoveRedEye size={18} />
+                ) : (
+                  <FaRegEyeSlash size={18} />
+                )}
               </span>
             </div>
 
@@ -172,7 +167,11 @@ const Register = () => {
                 className="absolute left-3 top-12 transform -translate-y-1/2 cursor-pointer text-gray-500"
                 onClick={() => setShowConfirm(!showConfirm)}
               >
-                {showConfirm ? <MdOutlineRemoveRedEye size={18} /> : <FaRegEyeSlash size={18} />}
+                {showConfirm ? (
+                  <MdOutlineRemoveRedEye size={18} />
+                ) : (
+                  <FaRegEyeSlash size={18} />
+                )}
               </span>
             </div>
           </div>
