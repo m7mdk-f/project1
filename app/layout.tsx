@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Cairo } from "next/font/google";
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+  variable: "--font-Cairo",
+});
 
 
 
@@ -14,19 +22,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ar" dir="rtl">
       <body
-        className={` antialiased`}
+        className={` ${cairo.variable} antialiased`}
       >
-      {/* <Image
-        width={300}
-        height={300}
-        src="https://localhost:7063/images/3f42414f-bf60-47b4-aae3-1d94d69cb4df.jpg"
-        alt="cs"
-        unoptimized
-      />      */}
-       {children}
+
+        {children}
       </body>
     </html>
   );
 }
+
