@@ -3,7 +3,15 @@
 html {
     scroll-behavior: smooth;
 }
-
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    /* or nowrap if you want one line only */
+}
 body {
     font-family: 'Cairo', sans-serif;
     direction: rtl;

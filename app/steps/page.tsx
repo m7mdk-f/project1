@@ -16,7 +16,6 @@ function page() {
                     </ol>
                 </div>
                 <div className='w-full flex justify-center items-center'>
-
                     <BusinessExperienceForm />
                 </div>
             </div>
