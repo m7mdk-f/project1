@@ -31,11 +31,11 @@ body {
   }
 
   .heading-primary {
-    @apply text-3xl font-bold text-blue-700;
+    @apply text-3xl font-bold text-blue-600;
   }
 
   .heading-secondary {
-    @apply text-xl font-semibold text-blue-600;
+    @apply text-xl font-semibold text-blue-400;
   }
 
   .link-blue {

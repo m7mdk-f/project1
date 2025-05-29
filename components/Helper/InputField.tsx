@@ -31,7 +31,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         dir={dir}
-        className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-green-300 text-right bg-white outline-0 border-0"
+        className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-green-300 text-right bg-white outline-0 border border-gray-300"
       />
       {icon && (
         <span className="absolute left-3 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-500">

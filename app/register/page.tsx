@@ -38,6 +38,7 @@ const Register = () => {
           },
         }
       );
+      console.log(response + "Good")
       alert("تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.");
       window.location.href = "/login";
     } catch (error: any) {
