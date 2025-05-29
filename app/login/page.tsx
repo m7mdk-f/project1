@@ -1,96 +1,139 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { MdOutlineRemoveRedEye } from "react-icons/md";
+import ImageSlider from "../../components/ImageSlideLogin/ImageSlider";
+import InputField from "@/components/Helper/InputField";
+import axios from "axios";
 
 const Login = () => {
-  const styl = { padding: "8px 12px" };
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailValid, setEmailValid] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setEmailValid(emailRegex.test(email));
+  }, [email]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+
+    try {
+      const response = await axios.post("https://localhost:7063/Login", {
+        Email: email,
+        Password: password,
+      });
+
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem("authToken", token);
+      }
+
+      window.location.href = "/steps"; // return after login success
+    } catch (error: any) {
+      if (error.response) {
+        const message = error.response.data;
+
+        if (typeof message === "string") {
+          if (message.includes("Error in Email or Password")) {
+            setLoginError("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+          } else {
+            setLoginError("حدث خطأ: " + message);
+          }
+        } else {
+          setLoginError("فشل تسجيل الدخول. الرجاء المحاولة لاحقاً.");
+        }
+      } else {
+        setLoginError("حدث خطأ أثناء الاتصال بالخادم.");
+      }
+    }
+  };
+
   return (
-    <section className="relative w-full h-screen flex flex-row-reverse">
-      <div className="imgBox6 md:relative md:w-1/2 md:h-full w-full absolute inset-0">
-        <Image
-          alt="صورة خلفية"
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          src="/images/login6.jpg"
-          width={500}
-          height={500}
-        />
-      </div>
-
-      <div className="flex container justify-center items-center md:w-1/2 h-full md:z-0 w-full z-10">
-        <div
-          className="w-full max-w-md p-8 md:p-12 rounded-xl shadow-lg"
-          style={{
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            padding: "20px",
-          }}
-          dir="rtl"
-        >
-          <h2 className="text-blue-600 font-semibold text-3xl mb-8 tracking-wide text-center">
+    <div className="min-h-screen lg:px-20 md:px-10 sm:p-5 bg-gray-100 flex flex-col lg:flex-row items-center justify-between gap-5 overflow-hidden">
+      {/* نموذج تسجيل الدخول */}
+      <div className="w-full xl:max-w-xl lg:max-w-lg p-8 rounded-lg">
+        <div className="flex justify-between border border-solid border-gray-300 rounded-lg mb-8">
+          <button
+            onClick={(e) => e.preventDefault()}
+            className="w-1/2 text-center border-l text-white bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-tr-lg rounded-br-lg"
+          >
             تسجيل الدخول
-          </h2>
-
-          <form className="flex flex-col gap-5" style={{ padding: "20px" }}>
-            <div className="w-full flex flex-col gap-3">
-              <label className="block text-base text-blue-600 font-medium">
-                البريد الإلكتروني
-              </label>
-              <input
-                style={styl}
-                className="w-full border border-blue-500 text-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                type="email"
-                placeholder="example@email.com"
-                autoComplete="email"
-              />
-            </div>
-
-            <div className="w-full flex flex-col gap-3">
-              <label className="block text-base  text-blue-600 font-medium">
-                كلمة المرور
-              </label>
-              <input
-                style={styl}
-                className="w-full border border-blue-500 text-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                type="password"
-                placeholder=""
-                autoComplete="current-password"
-              />
-            </div>
-
-            <div className="flex justify-between items-center text-sm text-blue-600">
-              <label className="flex items-center space-x-2 space-x-reverse">
-                <input type="checkbox" className="accent-blue-500" />
-                <span>تذكرني</span>
-              </label>
-
-              <Link href="#" className=" hover:text-blue-800">
-                نسيت كلمة المرور؟
-              </Link>
-            </div>
-
-            <div className="w-full">
-              <input
-                style={{ padding: "12px 16px" }}
-                className="w-full text-white font-semibold bg-blue-500 hover:bg-blue-600 rounded-lg cursor-pointer transition duration-200"
-                type="submit"
-                value="تسجيل الدخول"
-              />
-            </div>
-
-            <div className="text-center w-full text-sm md:text-base">
-              <p className="text-blue-600">
-                ليس لديك حساب؟
-                <Link
-                  href="/Register"
-                  className="ml-1 text-blue-600 hover:text-red-600 underline transition duration-200"
-                >
-                  أنشئ حساب
-                </Link>
-              </p>
-            </div>
-          </form>
+          </button>
+          <Link
+            href="/register"
+            className="w-1/2 text-center font-bold rounded-tl-lg rounded-bl-lg border-green-400 p-3.5 text-gray-500"
+          >
+            إنشاء حساب
+          </Link>
         </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="text-right flex justify-center flex-col gap-5"
+        >
+          <InputField
+            label="البريد الإلكتروني"
+            type="email"
+            placeholder="ادخل البريد الإلكتروني"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          {emailValid && (
+            <>
+              <InputField
+                label="كلمة المرور"
+                type={showPassword ? "text" : "password"}
+                placeholder="ادخل كلمة المرور"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={
+                  <span
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="cursor-pointer"
+                  >
+                    {showPassword ? (
+                      <MdOutlineRemoveRedEye size={18} />
+                    ) : (
+                      <FaRegEyeSlash size={18} />
+                    )}
+                  </span>
+                }
+              />
+              {loginError && (
+                <p className="text-red-500 text-sm mt-[-10px] mb-[-5px] text-right">
+                  {loginError}
+                </p>
+              )}
+            </>
+          )}
+
+          <button
+            type="submit"
+            disabled={!emailValid || password.length === 0}
+            style={{ padding: "10px 12px" }}
+            className={`w-full ${
+              !emailValid || password.length === 0
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
+            } text-white rounded-md transition duration-200`}
+          >
+            استمرار
+          </button>
+        </form>
       </div>
-    </section>
+
+      <div className="md:block hidden">
+        <ImageSlider />
+      </div>
+    </div>
   );
 };
 

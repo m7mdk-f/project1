@@ -1,75 +1,101 @@
-"use client"
-import { useState, FormEvent } from 'react';
+"use client";
+import { useState } from "react";
+import Question from "./Question";
 
-export default function BusinessExperienceForm() {
-    const [hasExperience, setHasExperience] = useState<boolean | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+export default function SequentialQuestions() {
+  const [answer1, setAnswer1] = useState<string | null>(null);
+  const [answer2, setAnswer2] = useState<string | null>(null);
+  const [answer3, setAnswer3] = useState<string | null>(null);
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        if (hasExperience === null) return;
+  const handleAnswer1 = (val: string) => {
+    setAnswer1(val);
+    setAnswer2(null);
+    setAnswer3(null);
+  };
 
-        setIsSubmitting(true);
-        console.log({ hasExperience });
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubmitting(false);
-        }, 1000);
-    };
+  const handleAnswer2 = (val: string) => {
+    setAnswer2(val);
+    setAnswer3(null);
+  };
 
-    return (
-        <div className="mt-9 p-5  w-3/4 bg-white rounded-lg shadow">
-            <div className="text-right mb-6">
-                <h2 className="lg:text-2xl md:text-xl sm:text-lg  text-base font-bold text-gray-800">
-                    ساعدنا نتعرف عليك أكثر لنقدم لك تجربة تلائم نشاطك التجاري
-                </h2>
-            </div>
+  const question2Options =
+    answer1 === "yes"
+      ? [
+          { label: "نعم", value: "yes" },
+          { label: "لا", value: "no" },
+        ]
+      : [
+          { label: "نعم لدي منتج او خذمة", value: "yes" },
+          { label: "لا ليس لدي منتج او خدمة بعد", value: "no" },
+        ];
 
-            <form onSubmit={handleSubmit}>
-                <div className=" my-12">
-                    <label className="block text-right  text-gray-700 lg:text-lg md:text-base text-sm font-medium mb-3">
-                        هل لديك خبرة في التجارة؟ (مطلوب)
-                    </label>
+  const question3Options =
+    answer2 === "yes"
+      ? [
+          { label: "عن طريق محل تجاري", value: "option1" },
+          { label: "عن طريق منصات الاجتماعي مثل الانستقرام", value: "option2" },
+        ]
+      : [
+          { label: "استكشاف المنصة", value: "option1" },
+          { label: "تجربة الدرويشوبيق", value: "option2" },
+          { label: "الاثنين معا", value: "option3" },
+        ];
 
-                    <div className="flex  space-x-4 space-x-reverse">
-                        <button
-                            type="button"
-                            onClick={() => setHasExperience(true)}
-                            className={`px-3 py-1 rounded-full text-lg font-medium ${hasExperience === true
-                                ? 'bg-green-200 text-black border-transparent'
-                                : 'bg-white text-gray-400 border-transparent'
-                                }`}
-                        >
-                            نعم
-                        </button>
+  return (
+    <div className="p-8 w-3/4 mx-auto bg-white shadow mt-5" dir="rtl">
+      <h1 className="text-2xl font-bold mb-8 text-gray-900 text-right">
+        ساعدنا نتعرف عليك أكثر لنقدم لك تجربة تلائم نشاطك التجاري
+      </h1>
 
-                        <button
-                            type="button"
-                            onClick={() => setHasExperience(false)}
-                            className={`px-3 py-1 rounded-full text-lg font-medium ${hasExperience === false
-                                ? 'bg-green-200 text-black border-transparent'
-                                : 'bg-white text-gray-400 border-transparent'
-                                }`}
-                        >
-                            ليس بعد
-                        </button>
+      <Question
+        questionText=" هل لديك خبرة في التجارة؟"
+        selected={answer1}
+        onSelect={handleAnswer1}
+        options={[
+          { label: "نعم", value: "yes" },
+          { label: "ليس بعد", value: "no" },
+        ]}
+      />
 
-                    </div>
-                </div>
+      {answer1 !== null && (
+        <Question
+          questionText={
+            answer1 === "yes"
+              ? " هل هذا أول متجر إلكتروني لك؟"
+              : "ما هي حاجتك الأساسية حالياً؟ "
+          }
+          selected={answer2}
+          onSelect={handleAnswer2}
+          options={question2Options}
+        />
+      )}
 
-                <div className="text-left">
-                    <button
-                        type="submit"
-                        disabled={hasExperience === null || isSubmitting}
-                        className={`px-8 py-3 rounded-lg text-lg font-medium text-white ${hasExperience === null
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700'
-                            } transition-colors`}
-                    >
-                        {isSubmitting ? 'جاري التحميل...' : 'التالي'}
-                    </button>
-                </div>
-            </form>
-        </div>
-    );
+      {answer2 !== null && (
+        <Question
+          questionText={
+            answer2 === "yes"
+              ? "كيف سبق لك ممارسة التجارة؟"
+              : "ما هو هدفك من فتح متجر على المنصة؟"
+          }
+          selected={answer3}
+          onSelect={setAnswer3}
+          options={question3Options}
+        ></Question>
+      )}
+      <hr className=" border-gray-300" />
+      <div className="text-left mt-4">
+        <button
+          disabled={!(answer1 && answer2 && answer3)}
+          type="submit"
+          className={`px-8 py-3 rounded-lg text-lg font-medium text-white transition-colors ${
+            answer1 && answer2 && answer3
+              ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              : "bg-blue-500 opacity-60 cursor-not-allowed"
+          }`}
+        >
+          التالي
+        </button>
+      </div>
+    </div>
+  );
 }
