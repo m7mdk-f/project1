@@ -24,14 +24,14 @@ const InputField = ({
 }: Props) => {
   return (
     <div className="relative w-full">
-      <label className="block text-sm text-gray-600 mb-2">{label}</label>
+      <label className="block text-sm text-blue-500 mb-2">{label}</label>
       <input
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         dir={dir}
-        className="w-full px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-green-300 text-right bg-white outline-0 border-0"
+        className="w-full px-4 py-2 text-right bg-white text-sm outline-0 border-b border-blue-300"
       />
       {icon && (
         <span className="absolute left-3 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-500">

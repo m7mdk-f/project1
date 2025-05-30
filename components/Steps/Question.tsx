@@ -1,9 +1,9 @@
 
 type QuestionProps = {
     questionText: string;
-    options: { label: string; value: string }[];
-    selected: string | null;
-    onSelect: (val: string) => void;
+    options: { label: string; value: boolean }[];
+    selected: boolean | null;
+    onSelect: (val: boolean) => void;
     children?: React.ReactNode;
 };
 
@@ -20,16 +20,16 @@ export default function Question({
                 {questionText}(مطلوب)
             </h2>
             <div className="flex flex-wrap items-center sm:justify-start justify-center md:gap-6 gap-1">
-                {options.map(({ label, value }) => (
+                {options.map((item, index) => (
                     <button
-                        key={value}
-                        onClick={() => onSelect(value)}
-                        className={`min-w-[100px] cursor-pointer  sm:text-sm text-xs md:text-base   py-3 px-4 rounded-full border font-medium transition-colors duration-300 ${selected === value
+                        key={index}
+                        onClick={() => onSelect(item.value)}
+                        className={`min-w-[100px] cursor-pointer  sm:text-sm text-xs md:text-base   py-3 px-4 rounded-full border font-medium transition-colors duration-300 ${selected === item.value
                             ? "bg-blue-600 text-white border-blue-600"
                             : "bg-white text-gray-600 border-gray-300 hover:bg-blue-50"
                             }`}
                     >
-                        {label}
+                        {item.label}
                     </button>
                 ))}
             </div>
