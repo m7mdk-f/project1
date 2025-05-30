@@ -7,6 +7,9 @@ import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
 import React, { useState } from "react";
+import LoadingCircle from "@/components/LoadingCircle";
+import { useRouter } from "next/navigation";
+import { Registerapi } from "@/components/api/api";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -16,45 +19,35 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [registerError, setRegisterError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegisterError(null);
-
-    const formData = new FormData();
-    formData.append("FullName", name);
-    formData.append("Email", email);
-    formData.append("PhoneNumber", `${selectedCode}${phone}`);
-    formData.append("Password", password);
-    formData.append("ConfirmPass", password);
+    setLoading(true)
 
     try {
-      const response = await axios.post(
-        "https://localhost:7063/Create-account",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(response + "Good")
-      alert("تم التسجيل بنجاح! تحقق من بريدك الإلكتروني.");
-      window.location.href = "/login";
-    } catch (error: any) {
-      if (error.response) {
-        if (error.response.status === 409) {
-          setRegisterError(
-            "هذا البريد الإلكتروني مستخدم مسبقًا. حاول تسجيل الدخول."
-          );
+      await Registerapi(name, email, selectedCode, phone, password)
+      router.push("/checkyouremail");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 409) {
+            setRegisterError(
+              "هذا البريد الإلكتروني مستخدم مسبقًا. حاول تسجيل الدخول."
+            );
+          } else {
+            setRegisterError(
+              `فشل التسجيل: ${JSON.stringify(error.response.data)}`
+            );
+          }
         } else {
-          setRegisterError(
-            `فشل التسجيل: ${JSON.stringify(error.response.data)}`
-          );
+          setRegisterError("حدث خطأ أثناء الاتصال بالخادم.");
         }
-      } else {
-        setRegisterError("حدث خطأ أثناء الاتصال بالخادم.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,7 +79,7 @@ const Register = () => {
             label="الاسم الكريم"
             placeholder="ادخل الاسم الكريم"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
           />
 
           <InputField
@@ -94,12 +87,12 @@ const Register = () => {
             type="email"
             placeholder="ادخل البريد الإلكتروني"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           />
 
           <PhoneField
             phone={phone}
-            onPhoneChange={(e) => setPhone(e.target.value)}
+            onPhoneChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
             selectedCode={selectedCode}
             onCodeChange={setSelectedCode}
           />
@@ -114,18 +107,16 @@ const Register = () => {
               {registerError}
             </p>
           )}
-
           <button
             type="submit"
-            disabled={!isPasswordValid}
+            disabled={!isPasswordValid || loading}
             style={{ padding: "10px 12px" }}
-            className={`w-full text-white rounded-md transition duration-200 ${
-              isPasswordValid
-                ? "cursor-pointer bg-blue-500 hover:bg-blue-600"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
+            className={`w-full text-white rounded-md transition duration-200 ${!isPasswordValid || loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "cursor-pointer bg-blue-500 hover:bg-blue-600"
+              } flex justify-center items-center gap-2`}
           >
-            تسجيل
+            {loading ? <LoadingCircle /> : "تسجيل"}
           </button>
 
           <p className="text-sm text-center text-blue-500">

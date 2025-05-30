@@ -1,12 +1,14 @@
-"use client";
-
-import Link from "next/link";
+"use client"
 import React, { useState, useEffect } from "react";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import ImageSlider from "../../components/ImageSlideLogin/ImageSlider";
 import InputField from "@/components/Helper/InputField";
 import axios from "axios";
+import Link from "next/link";
+import LoadingCircle from "@/components/LoadingCircle";
+import { login } from "@/components/api/api";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +16,8 @@ const Login = () => {
   const [emailValid, setEmailValid] = useState(false);
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,35 +27,32 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
+    setLoading(true);
 
     try {
-      const response = await axios.post("https://localhost:7063/Login", {
-        Email: email,
-        Password: password,
-      });
+      login(email, password);
+      router.push("/steps");
 
-      const token = response.data.token;
-      if (token) {
-        localStorage.setItem("authToken", token);
-      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          const message = error.response.data;
 
-      window.location.href = "/steps"; // return after login success
-    } catch (error: any) {
-      if (error.response) {
-        const message = error.response.data;
-
-        if (typeof message === "string") {
-          if (message.includes("Error in Email or Password")) {
-            setLoginError("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+          if (typeof message === "string") {
+            if (message.includes("Error in Email or Password")) {
+              setLoginError("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+            } else {
+              setLoginError("حدث خطأ: " + message);
+            }
           } else {
-            setLoginError("حدث خطأ: " + message);
+            setLoginError("فشل تسجيل الدخول. الرجاء المحاولة لاحقاً.");
           }
         } else {
-          setLoginError("فشل تسجيل الدخول. الرجاء المحاولة لاحقاً.");
+          setLoginError("حدث خطأ أثناء الاتصال بالخادم.");
         }
-      } else {
-        setLoginError("حدث خطأ أثناء الاتصال بالخادم.");
       }
+    } finally {
+      setLoading(false); // <-- stop loading in all cases
     }
   };
 
@@ -117,15 +118,14 @@ const Login = () => {
 
           <button
             type="submit"
-            disabled={!emailValid || password.length === 0}
+            disabled={!emailValid || password.length === 0 || loading}
             style={{ padding: "10px 12px" }}
-            className={`w-full ${
-              !emailValid || password.length === 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
-            } text-white rounded-md transition duration-200`}
+            className={`w-full ${!emailValid || password.length === 0 || loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
+              } text-white rounded-md transition duration-200`}
           >
-            استمرار
+            {loading ? <LoadingCircle size={20} /> : "استمرار"}
           </button>
         </form>
       </div>
