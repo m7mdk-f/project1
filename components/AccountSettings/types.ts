@@ -1,0 +1,42 @@
+import { LatLngExpression } from "leaflet";
+
+export type Step = {
+  number: number;
+  label: string;
+  content?: React.ReactNode;
+};
+
+export type QustionFormData = {
+  storeName: string;
+  storeDomain: string;
+  entityType?: string;
+};
+
+export type FormData = {
+  storeName: string;
+  storeDomain: string;
+  brandIdentity: string;
+  shipmentLocation: string;
+  shippingCompanies: string;
+  paymentMethods: string;
+  basketPackage: string;
+  launchDate: string;
+  categories?: string[];
+  storeImage?: File | null;
+  storeDescription?: string;
+};
+
+export type FormErrors = Partial<Record<keyof FormData, string>>;
+
+export type Plan = {
+  id: string;
+  name: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: string[];
+};
+
+export type LocationSelectorProps = {
+  position: LatLngExpression | null;
+  setPosition: (pos: LatLngExpression) => void;
+};

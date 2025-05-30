@@ -43,7 +43,7 @@ body {
   }
 
   .heading-secondary {
-    @apply text-xl font-semibold text-blue-400;
+    @apply text-blue-400;
   }
 
   .link-blue {
