@@ -9,6 +9,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import LoadingCircle from "@/components/LoadingCircle";
 import { useRouter } from "next/navigation";
+import { Registerapi } from "@/components/api/api";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -24,25 +25,10 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegisterError(null);
-
-    const formData = new FormData();
-    formData.append("FullName", name);
-    formData.append("Email", email);
-    formData.append("PhoneNumber", `${selectedCode}${phone}`);
-    formData.append("Password", password);
-    formData.append("ConfirmPass", password);
     setLoading(true)
-    try {
-      await axios.post(
-        "https://localhost:7063/Create-account",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
 
+    try {
+      await Registerapi(name, email, selectedCode, phone, password)
       router.push("/checkyouremail");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

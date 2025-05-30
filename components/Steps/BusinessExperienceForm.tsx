@@ -1,8 +1,9 @@
 "use client"
-import { useState } from "react";
 import Question from "./Question";
+import React, { SetStateAction, useState } from 'react';
 
-export default function SequentialQuestions() {
+
+export default function BusinessExperienceForm({ setAcive, active }: { active: boolean, setAcive: React.Dispatch<SetStateAction<boolean>> }) {
     const [answer1, setAnswer1] = useState<string | null>(null);
     const [answer2, setAnswer2] = useState<string | null>(null);
     const [answer3, setAnswer3] = useState<string | null>(null);
@@ -41,49 +42,60 @@ export default function SequentialQuestions() {
                 { label: "الاثنين معا", value: "option3" },
             ];
 
+    function handValue() {
+        console.log(answer1)
+        console.log(answer2)
+        console.log(answer3)
+
+        setAcive(true)
+    }
     return (
-        <div className="p-8 w-3/4 mx-auto bg-white shadow mt-5" dir="rtl">
-            <h1 className="text-2xl font-bold mb-8 text-gray-900 text-right">
-                ساعدنا نتعرف عليك أكثر لنقدم لك تجربة تلائم نشاطك التجاري
+        <div className="p-8  lg:max-w-6xl md:max-w-2xl w-full bg-white shadow mt-5" dir="rtl">
+            <h1 className="lg:text-2xl md:text-xl sm:text-lg text-sm font-bold mb-8 text-gray-900 text-right">
+                {active ? "mohamed"
+                    :
+                    "ساعدنا نتعرف عليك أكثر لنقدم لك تجربة تلائم نشاطك التجاري"
+                }
             </h1>
-
-            <Question
-                questionText=" هل لديك خبرة في التجارة؟"
-                selected={answer1}
-                onSelect={handleAnswer1}
-                options={[
-                    { label: "نعم", value: "yes" },
-                    { label: "ليس بعد", value: "no" },
-                ]}
-            />
-
-            {answer1 !== null && (
+            {active ? <div></div> : <div>
                 <Question
-                    questionText={
-                        answer1 === "yes"
-                            ? " هل هذا أول متجر إلكتروني لك؟"
-                            : "ما هي حاجتك الأساسية حالياً؟ "
-                    }
-                    selected={answer2}
-                    onSelect={handleAnswer2}
-                    options={question2Options}
+                    questionText=" هل لديك خبرة في التجارة؟"
+                    selected={answer1}
+                    onSelect={handleAnswer1}
+                    options={[
+                        { label: "نعم", value: "yes" },
+                        { label: "ليس بعد", value: "no" },
+                    ]}
                 />
-            )}
+                {answer1 !== null && (
+                    <Question
+                        questionText={
+                            answer1 === "yes"
+                                ? " هل هذا أول متجر إلكتروني لك؟"
+                                : "ما هي حاجتك الأساسية حالياً؟ "
+                        }
+                        selected={answer2}
+                        onSelect={handleAnswer2}
+                        options={question2Options}
+                    />
+                )}
 
-            {answer2 !== null && (
-                <Question
-                    questionText={
-                        answer2 === "yes"
-                            ? "كيف سبق لك ممارسة التجارة؟"
-                            : "ما هو هدفك من فتح متجر على المنصة؟"
-                    }
-                    selected={answer3}
-                    onSelect={setAnswer3}
-                    options={question3Options}
-                >
+                {answer2 !== null && (
+                    <Question
+                        questionText={
+                            answer2 === "yes"
+                                ? "كيف سبق لك ممارسة التجارة؟"
+                                : "ما هو هدفك من فتح متجر على المنصة؟"
+                        }
+                        selected={answer3}
+                        onSelect={setAnswer3}
+                        options={question3Options}
+                    >
 
-                </Question>
-            )}
+                    </Question>
+                )}
+            </div>
+            }
             <hr className=" border-gray-300" />
             <div className="text-left mt-4">
                 <button
@@ -93,6 +105,7 @@ export default function SequentialQuestions() {
                         ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                         : "bg-blue-500 opacity-60 cursor-not-allowed"
                         }`}
+                    onClick={handValue}
                 >
                     التالي
                 </button>

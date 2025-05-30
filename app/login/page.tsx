@@ -7,6 +7,8 @@ import InputField from "@/components/Helper/InputField";
 import axios from "axios";
 import Link from "next/link";
 import LoadingCircle from "@/components/LoadingCircle";
+import { login } from "@/components/api/api";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,7 +16,8 @@ const Login = () => {
   const [emailValid, setEmailValid] = useState(false);
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // <-- new loading state
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,20 +27,12 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
-    setLoading(true); // <-- start loading
+    setLoading(true);
 
     try {
-      const response = await axios.post("https://localhost:7063/Login", {
-        Email: email,
-        Password: password,
-      });
+      login(email, password);
+      router.push("/steps");
 
-      const token = response.data.token;
-      if (token) {
-        localStorage.setItem("authToken", token);
-      }
-
-      window.location.href = "/steps";
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
