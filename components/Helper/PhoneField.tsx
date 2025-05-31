@@ -32,8 +32,8 @@ const PhoneField = ({
 
   return (
     <div className="relative">
-      <label className="block text-sm text-gray-600 mb-2">رقم الجوال</label>
-      <div className="flex flex-row-reverse bg-white text-gray-600 rounded-md">
+      <label className="block text-sm text-blue-500 mb-2">رقم الجوال</label>
+      <div className="flex flex-row-reverse bg-white text-gray-600 border-b border-blue-400">
         <div
           onClick={() => setShowDropdown(!showDropdown)}
           className="cursor-pointer border-r my-2 py-1 px-4"
@@ -45,12 +45,12 @@ const PhoneField = ({
           value={phone}
           onChange={onPhoneChange}
           placeholder="ادخل رقم الجوال"
-          className="flex-1 px-4 outline-0 border-0 bg-transparent text-right"
+          className="flex-1 px-4 text-sm outline-0 border-0 bg-transparent text-right"
         />
       </div>
 
       {showDropdown && (
-        <div className="absolute z-50 bg-white border border-gray-300 mt-1 w-[28em] rounded-md max-h-60 overflow-y-auto shadow-md">
+        <div className="absolute z-50 bg-white border border-gray-300 mt-1 w-[26em] rounded-md max-h-60 overflow-y-auto shadow-md">
           <input
             type="text"
             placeholder="ابحث عن الدولة"

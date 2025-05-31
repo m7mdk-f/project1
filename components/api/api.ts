@@ -1,15 +1,14 @@
 import axios from "axios";
 
-const baseurl="https://localhost:7063";
+export const baseurl="https://localhost:7063";
 export const  login=async function (email:string,password:string){
     const response = await axios.post(`${baseurl}/Login`, {
         Email: email,
         Password: password,
       });
-
-      const token = response.data.token;
+      const token = response.data.token.result;
       if (token) {
-        localStorage.setItem("authToken", token);
+        localStorage.setItem("token", token);
       }
 }
 
@@ -30,3 +29,4 @@ export const Registerapi =async function (name:string,email:string,selectedCode:
         }
       );
 }
+

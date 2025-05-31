@@ -38,13 +38,13 @@ const PasswordField = ({ password, onChange, onValidChange }: Props) => {
 
   return (
     <div className="relative w-full">
-      <label className="block text-sm text-gray-600 mb-2">كلمة المرور</label>
+      <label className="block text-sm text-blue-500 mb-2">كلمة المرور</label>
       <input
         type={show ? "text" : "password"}
         value={password}
         onChange={(e) => checkStrength(e.target.value)}
         placeholder="ادخل كلمة المرور"
-        className="w-full focus:border rounded-md bg-white text-right outline-0 border-0 px-4 py-2"
+        className="w-full  text-sm bg-white text-right outline-0 border-b border-blue-400 px-4 py-2"
       />
       <span
         className="absolute left-3 top-[3em] transform -translate-y-1/2 cursor-pointer text-gray-500"
