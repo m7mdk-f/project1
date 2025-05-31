@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import CheckBox from "./CheckBox";
 import Question from "./Question";
 import React, { SetStateAction, useState } from 'react';
-import { IStoreRediness } from "../models/StoreRediness";
+import { IStoreRediness } from "../models/Models";
 import { PostAboutme } from "../api/apiAboutYou";
 import LoadingCircle from "../LoadingCircle";
 

@@ -12,9 +12,10 @@ export type QustionFormData = {
   entityType?: string;
 };
 
-export type FormData = {
+export type FormDataType = {
   storeName: string;
   storeDomain: string;
+  entityType:string,
   brandIdentity: string;
   shipmentLocation: string;
   shippingCompanies: string;
@@ -28,13 +29,6 @@ export type FormData = {
 
 export type FormErrors = Partial<Record<keyof FormData, string>>;
 
-export type Plan = {
-  id: string;
-  name: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  features: string[];
-};
 
 export type LocationSelectorProps = {
   position: LatLngExpression | null;

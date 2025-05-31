@@ -1,7 +1,7 @@
 import React, { SetStateAction, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import LoadingCircle from '../LoadingCircle';
-import { IStoreRediness } from '../models/StoreRediness';
+import { IStoreRediness } from '../models/Models';
 import { GetAllStoreReadiness } from '../api/apiAboutYou';
 
 function CheckBox({ options, checkedItems, setCheckedItems, setOption }: { setCheckedItems: React.Dispatch<SetStateAction<number[]>>, checkedItems: number[], options: IStoreRediness[], setOption: React.Dispatch<SetStateAction<IStoreRediness[]>> }) {

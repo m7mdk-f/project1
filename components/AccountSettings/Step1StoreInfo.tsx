@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FormData } from "./types";
+import { FormDataType } from "./types";
 
 type Props = {
   formData: {
@@ -9,7 +9,7 @@ type Props = {
   };
   questionFormData: { entityType?: string };
   formErrors: Record<string, string>;
-  onChange: (field: keyof FormData, value: string) => void;
+  onChange: (field: keyof FormDataType, value: string) => void;
   onEntityTypeChange: (value: string) => void;
 };
 
@@ -34,9 +34,8 @@ export default function Step1StoreInfo({
         type="text"
         value={formData.storeName}
         onChange={(e) => onChange("storeName", e.target.value)}
-        className={`w-full p-2 border rounded ${
-          formErrors.storeName ? "border-red-500" : "border-gray-300"
-        }`}
+        className={`w-full p-2 border rounded ${formErrors.storeName ? "border-red-500" : "border-gray-300"
+          }`}
         placeholder="أدخل اسم المتجر"
       />
       {formErrors.storeName ? (
@@ -50,20 +49,27 @@ export default function Step1StoreInfo({
           <label className="block mt-6 mb-2 font-semibold text-gray-700">
             رابط المتجر
           </label>
+          <p className="text-gray-600 mb-2 text-xs">سيكون هو رابط المتجر الذي يمكن للعملاء الدخول عليه للطلب</p>
+
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <input
               type="text"
               value={formData.storeDomain}
               onChange={(e) => onChange("storeDomain", e.target.value)}
-              className={`flex-grow p-2 border rounded ${
-                formErrors.storeDomain ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`flex-grow text-left p-2 border rounded ${formErrors.storeDomain ? "border-red-500" : "border-gray-300"
+                }`}
               placeholder="أدخل اسم النطاق (مثال: my-store)"
             />
             <span className="text-gray-600">/testing.com</span>
           </div>
           {formErrors.storeDomain && (
-            <p className="text-red-600 mt-1">{formErrors.storeDomain}</p>
+            <>
+              <p className="text-red-600 mt-1">{formErrors.storeDomain}</p>
+              <button id="butn"></button>
+              <button></button>
+              <button></button>
+
+            </>
           )}
         </>
       )}
@@ -77,17 +83,24 @@ export default function Step1StoreInfo({
             <button
               key={type}
               type="button"
-              onClick={() => onEntityTypeChange(type)}
-              className={`px-5 py-2 ml-5 rounded-lg font-medium transition ${
-                questionFormData.entityType === type
-                  ? "bg-indigo-600 text-white shadow-lg"
-                  : "bg-gray-200 text-gray-700 hover:bg-indigo-100"
-              }`}
+              onClick={() => {
+
+                onEntityTypeChange(type)
+              }}
+              className={`px-5 py-2 ml-5 rounded-lg font-medium transition ${questionFormData.entityType === type
+                ? "bg-indigo-600 text-white shadow-lg"
+                : "bg-gray-200 text-gray-700 hover:bg-indigo-100"
+                }`}
             >
               {type}
             </button>
           ))}
+
         </div>
+        {
+          formErrors.entityType &&
+          <p className="text-red-600 mt-1">{formErrors.entityType}</p>
+        }
       </div>
     </div>
   );

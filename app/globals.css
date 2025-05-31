@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
+
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
+
 .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -10,43 +12,42 @@ html {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
-    /* or nowrap if you want one line only */
 }
+
 body {
-  font-family: "Cairo", sans-serif;
-  direction: rtl;
+    font-family: "Cairo", sans-serif;
+    direction: rtl;
 }
 
 @layer utilities {
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-md transition-colors duration-200;
-  }
+    .btn-primary {
+        @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-md transition-colors duration-200;
+    }
 
-  .btn-secondary {
-    @apply bg-blue-200 hover:bg-blue-300 text-blue-800 font-semibold py-2 px-5 rounded-md transition-colors duration-200;
-  }
+    .btn-secondary {
+        @apply bg-blue-200 hover:bg-blue-300 text-blue-800 font-semibold py-2 px-5 rounded-md transition-colors duration-200;
+    }
 
-  .btn-disabled {
-    @apply bg-gray-300 text-gray-500 cursor-not-allowed opacity-70;
-  }
+    .btn-disabled {
+        @apply bg-gray-300 text-gray-500 cursor-not-allowed opacity-70;
+    }
 
-  .input-blue {
-    @apply border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
-  }
+    .input-blue {
+        @apply border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+    }
 
-  .card {
-    @apply bg-white rounded-md shadow-md p-6;
-  }
+    .card {
+        @apply bg-white rounded-md shadow-md p-6;
+    }
 
-  .heading-primary {
-    @apply text-3xl font-bold text-blue-600;
-  }
+    .heading-primary {
+        @apply text-3xl font-bold text-blue-600;
+    }
 
-  .heading-secondary {
-    @apply text-blue-400;
-  }
+    .heading-secondary {
+        @apply text-blue-400;
+    }
 
-  .link-blue {
-    @apply text-blue-600 hover:underline;
-  }
-}
+    .link-blue {
+        @apply text-blue-600 hover:underline;
+    } }
