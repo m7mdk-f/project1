@@ -12,7 +12,7 @@ export type QustionFormData = {
   entityType?: string;
 };
 
-export type FormData = {
+export type FormDataType = {
   storeName: string;
   storeDomain: string;
   entityType:string,
@@ -25,7 +25,6 @@ export type FormData = {
   categories?: string[];
   storeImage?: File | null;
   storeDescription?: string;
-  selectIdPacket?:number,
 };
 
 export type FormErrors = Partial<Record<keyof FormData, string>>;

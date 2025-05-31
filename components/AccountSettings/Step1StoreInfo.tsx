@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FormData } from "./types";
+import { FormDataType } from "./types";
 
 type Props = {
   formData: {
@@ -9,7 +9,7 @@ type Props = {
   };
   questionFormData: { entityType?: string };
   formErrors: Record<string, string>;
-  onChange: (field: keyof FormData, value: string) => void;
+  onChange: (field: keyof FormDataType, value: string) => void;
   onEntityTypeChange: (value: string) => void;
 };
 

@@ -20,9 +20,7 @@ export default function Step5Plans({
   const [plan, setPlan] = useState<Plan[]>([]);
   const [loading, setLoading] = useState<boolean>(true)
   useEffect(() => {
-    console.log(selectedPlanId)
     pakegeAll().then(d => {
-      console.log(d)
       setPlan(d)
     }).catch(e => {
       alert(e)

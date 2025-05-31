@@ -40,3 +40,27 @@ export const pakegeAll = async function ( ) {
     }
 };
 
+export const CreateMarket = async function (formData:FormData) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No auth token found in localStorage");
+      }
+  
+      const response = await axios.post(
+        `${baseurl}/api/Market`,
+        formData, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      return response.data;
+    } catch (error) {
+      console.error("Failed to create market:", error);
+      throw error;
+    }
+  };
+  

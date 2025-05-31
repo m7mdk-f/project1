@@ -8,11 +8,11 @@ import "leaflet/dist/leaflet.css";
 import {
   QustionFormData,
   Step,
-  FormData,
+  FormDataType,
 } from "@/components/AccountSettings/types";
 import { LatLngExpression } from "leaflet";
 import { transliterateArabicToEnglish } from "@/components/api/functionReplacyAtoE";
-import { CheckDomain } from "@/components/api/Market";
+import { CheckDomain, CreateMarket } from "@/components/api/Market";
 
 const steps: Step[] = [
   { number: 1, label: "معلومات المتجر" },
@@ -27,10 +27,10 @@ const steps: Step[] = [
 
 const AccountSettings: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<number>(0);
 
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<FormDataType>({
     storeName: "",
     storeDomain: "",
     entityType: "",
@@ -61,7 +61,6 @@ const AccountSettings: React.FC = () => {
 
   function checkfist() {
     numbervalid.current = 0;
-    console.log(formData)
     if (formData.storeName == "") {
       setFormErrors((prev) => ({
         ...prev,
@@ -106,14 +105,21 @@ const AccountSettings: React.FC = () => {
 
   const handleNext = () => {
     if (currentStep === steps.length) {
-
-    }
-    if (currentStep == 5) {
-      setFormData({
-        ...formData,
-        selectIdPacket: selectedPlanId ?? 0,
+      console.log(formData)
+      const Data = new FormData()
+      Data.append("name", formData.storeName);
+      Data.append("domain ", formData.storeDomain);
+      Data.append("description", formData.storeDescription ?? "");
+      Data.append("packageid", selectedPlanId.toString()); formData.categories?.forEach(category => {
+        Data.append("categories", category);
       });
+
+
+      CreateMarket(Data).then(d => {
+        console.log(d)
+      }).catch(() => { });
     }
+
     checkfist()
     if (currentStep === 3) {
       setFormData({
@@ -137,7 +143,6 @@ const AccountSettings: React.FC = () => {
     if (currentStep < steps.length) {
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps([...completedSteps, currentStep]);
-        console.log(completedSteps)
       }
       setCurrentStep(currentStep + 1);
     }
@@ -148,7 +153,7 @@ const AccountSettings: React.FC = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field: keyof FormDataType, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
