@@ -25,17 +25,11 @@ export type FormData = {
   categories?: string[];
   storeImage?: File | null;
   storeDescription?: string;
+  selectIdPacket?:number,
 };
 
 export type FormErrors = Partial<Record<keyof FormData, string>>;
 
-export type Plan = {
-  id: string;
-  name: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  features: string[];
-};
 
 export type LocationSelectorProps = {
   position: LatLngExpression | null;

@@ -29,3 +29,14 @@ export const parentCategoriesAll = async function ( ) {
     }
 };
 
+
+export const pakegeAll = async function ( ) {
+    try {
+        const response = await axios.get(`${baseurl}/api/Package`);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to fetch store readiness:", error);
+        throw error;
+    }
+};
+

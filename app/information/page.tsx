@@ -6,7 +6,6 @@ import Step3Location from "@/components/AccountSettings/Step3Location";
 import Step5Plans from "@/components/AccountSettings/Step5Plans";
 import "leaflet/dist/leaflet.css";
 import {
-  Plan,
   QustionFormData,
   Step,
   FormData,
@@ -24,32 +23,12 @@ const steps: Step[] = [
   { number: 6, label: "توثيق المتجر" },
 ];
 
-const plans: Plan[] = [
-  {
-    id: "basic",
-    name: "الباقة الأساسية",
-    monthlyPrice: 20,
-    yearlyPrice: 200,
-    features: ["ميزة 1", "ميزة 2", "ميزة 3"],
-  },
-  {
-    id: "pro",
-    name: "الباقة المتقدمة",
-    monthlyPrice: 40,
-    yearlyPrice: 400,
-    features: ["ميزة 1", "ميزة 2", "ميزة 3", "ميزة 4"],
-  },
-  {
-    id: "enterprise",
-    name: "الباقة الشاملة",
-    monthlyPrice: 80,
-    yearlyPrice: 800,
-    features: ["كل الميزات", "دعم مخصص", "تحديثات مستمرة"],
-  },
-];
+
 
 const AccountSettings: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
+
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [formData, setFormData] = useState<FormData>({
     storeName: "",
@@ -76,13 +55,13 @@ const AccountSettings: React.FC = () => {
   const [postalCode, setPostalCode] = useState("");
 
   const [billingCycle, setBillingCycle] = useState<"month" | "year">("month");
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const valid = useRef<boolean>(false);
   const numbervalid = useRef<number>(0);
 
 
   function checkfist() {
     numbervalid.current = 0;
+    console.log(formData)
     if (formData.storeName == "") {
       setFormErrors((prev) => ({
         ...prev,
@@ -124,7 +103,17 @@ const AccountSettings: React.FC = () => {
 
     }
   }
+
   const handleNext = () => {
+    if (currentStep === steps.length) {
+
+    }
+    if (currentStep == 5) {
+      setFormData({
+        ...formData,
+        selectIdPacket: selectedPlanId ?? 0,
+      });
+    }
     checkfist()
     if (currentStep === 3) {
       setFormData({
@@ -148,9 +137,11 @@ const AccountSettings: React.FC = () => {
     if (currentStep < steps.length) {
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps([...completedSteps, currentStep]);
+        console.log(completedSteps)
       }
       setCurrentStep(currentStep + 1);
     }
+
   };
 
   const handlePrev = () => {
@@ -199,8 +190,6 @@ const AccountSettings: React.FC = () => {
           }));
 
         }
-
-
       })
     }, 500)
     return () => clearTimeout(r)
@@ -264,7 +253,6 @@ const AccountSettings: React.FC = () => {
       case 5:
         return (
           <Step5Plans
-            plans={plans}
             billingCycle={billingCycle}
             setBillingCycle={setBillingCycle}
             selectedPlanId={selectedPlanId}
@@ -359,9 +347,9 @@ const AccountSettings: React.FC = () => {
             type="button"
             className="px-6 py-3 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNext}
-            disabled={currentStep === steps.length}
+
           >
-            التالي
+            {currentStep === steps.length ? "دخول" : "التالي"}
           </button>
         </div>
       </div>

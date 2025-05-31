@@ -27,6 +27,10 @@ export default function Step2StoreIdentity({
 }: Props) {
   const [options, setOptions] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const formattedOptions = options.map(opt => ({
+    value: opt.id.toString(),
+    label: opt.title
+  }));
   useEffect(() => {
     setLoading(true);
     parentCategoriesAll().then((d) => {
@@ -41,7 +45,7 @@ export default function Step2StoreIdentity({
   }, [])
   return (
     <>
-      {loading ? <div className="flex justify-center items-center"> <LoadingCircle /></div> :
+      {loading ? <div className="flex w-full h-full justify-center items-center"> <LoadingCircle /></div> :
         <div>
           <h3 className="heading-secondary text-3xl">صف نشاط متجرك لعملائك</h3>
           <p className="text-sm text-gray-700 mt-2 mb-7">
@@ -56,13 +60,13 @@ export default function Step2StoreIdentity({
               </label>
               <Select
                 isMulti
-                options={options}
-                value={options.filter((option) =>
-                  categories?.includes(option.id.toString())
+                options={formattedOptions}
+                value={formattedOptions.filter((option) =>
+                  categories?.includes(option.value)
                 )}
                 onChange={(selected) =>
                   onCategoriesChange(
-                    selected ? selected.map((opt) => opt.id.toString()) : []
+                    selected ? selected.map(opt => opt.value) : []
                   )
                 }
                 placeholder="اختر أو اكتب فئات التجارة"
