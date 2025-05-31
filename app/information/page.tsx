@@ -113,7 +113,12 @@ const AccountSettings: React.FC = () => {
       Data.append("packageid", selectedPlanId.toString()); formData.categories?.forEach(category => {
         Data.append("categories", category);
       });
+      console.log(selectedPlanId)
+      Data.append("Color ", "");
+      Data.append("AddressCode ", "");
 
+      Data.append("EntityType", "");
+      console.log(Data)
 
       CreateMarket(Data).then(d => {
         console.log(d)
