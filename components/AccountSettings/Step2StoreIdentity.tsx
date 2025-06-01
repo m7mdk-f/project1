@@ -12,6 +12,7 @@ type Props = {
   categories?: string[];
   storeImage?: File | null;
   storeDescription?: string;
+  formErrors: Record<string, string>;
   onCategoriesChange: (values: string[]) => void;
   onImageChange: (file: File | null) => void;
   onDescriptionChange: (value: string) => void;
@@ -21,6 +22,7 @@ export default function Step2StoreIdentity({
   categories,
   storeImage,
   storeDescription,
+  formErrors,
   onCategoriesChange,
   onImageChange,
   onDescriptionChange,
@@ -45,19 +47,23 @@ export default function Step2StoreIdentity({
   }, [])
   return (
     <>
-      {loading ? <div className="flex w-full h-full justify-center items-center"> <LoadingCircle /></div> :
+      {loading ? (
+        <div className="flex w-full h-full justify-center items-center">
+          {" "}
+          <LoadingCircle />
+        </div>
+      ) : (
         <div>
           <h3 className="heading-secondary text-3xl">صف نشاط متجرك لعملائك</h3>
           <p className="text-sm text-gray-700 mt-2 mb-7">
-            سيظهر الشعار والتعريف المكتوب أدناه في متجرك الإلكتروني لعملائك ويمكنك
-            التعديل عليهما لاحقاً
+            سيظهر الشعار والتعريف المكتوب أدناه في متجرك الإلكتروني لعملائك
+            ويمكنك التعديل عليهما لاحقاً
           </p>
 
           <div className="space-y-6">
             <div>
               <label className="block mb-2 font-semibold text-gray-700">
-                ما فئة تجارتكم
-                (اختياري)
+                ما فئة تجارتكم (اختياري)
               </label>
               <Select
                 isMulti
@@ -67,7 +73,7 @@ export default function Step2StoreIdentity({
                 )}
                 onChange={(selected) =>
                   onCategoriesChange(
-                    selected ? selected.map(opt => opt.value) : []
+                    selected ? selected.map((opt) => opt.value) : []
                   )
                 }
                 placeholder="اختر أو اكتب فئات التجارة"
@@ -75,6 +81,9 @@ export default function Step2StoreIdentity({
                 classNamePrefix="select"
                 noOptionsMessage={() => "لا توجد خيارات"}
               />
+              {formErrors.categories && (
+                <p className="text-red-600 mt-1">{formErrors.categories}</p>
+              )}
             </div>
 
             <div>
@@ -82,6 +91,9 @@ export default function Step2StoreIdentity({
                 صورة الشعار (اختياري)
               </label>
               <ImageDropzone image={storeImage} setImage={onImageChange} />
+              {formErrors.storeImage && (
+                <p className="text-red-600 mt-1">{formErrors.storeImage}</p>
+              )}
             </div>
 
             <div>
@@ -94,10 +106,15 @@ export default function Step2StoreIdentity({
                 placeholder="اكتب وصفاً مختصراً لمتجرك"
                 className="w-full p-2 border rounded resize-y min-h-[100px]"
               />
+              {formErrors.storeDescription && (
+                <p className="text-red-600 mt-1">
+                  {formErrors.storeDescription}
+                </p>
+              )}
             </div>
           </div>
         </div>
-      }
+      )}
     </>
   );
 }

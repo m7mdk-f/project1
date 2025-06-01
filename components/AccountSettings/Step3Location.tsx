@@ -6,39 +6,37 @@ import React, { useEffect, useState } from "react";
 import type { MapContainerProps, TileLayerProps } from "react-leaflet";
 
 if (typeof window !== "undefined") {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   delete (L.Icon.Default.prototype as any)._getIconUrl;
 
   L.Icon.Default.mergeOptions({
     iconRetinaUrl:
       "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png",
-    iconUrl:
-      "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
-    shadowUrl:
-      "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
+    iconUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
   });
 }
 
 type Props = {
   location: LatLngExpression | null;
   setLocation: (pos: LatLngExpression) => void;
+  errorProp?: string;
 };
 
-export default function Step3Location({ location, setLocation }: Props) {
+export default function Step3Location({
+  location,
+  setLocation,
+  errorProp,
+}: Props) {
   const [isClient, setIsClient] = useState(false);
 
-  const [MapContainer, setMapContainer] = useState<
-    React.ComponentType<MapContainerProps> | null
-  >(null);
-  const [TileLayer, setTileLayer] = useState<
-    React.ComponentType<TileLayerProps> | null
-  >(null);
-  const [LocationSelector, setLocationSelector] = useState<
-    React.ComponentType<{
-      position: LatLngExpression | null;
-      setPosition: (pos: LatLngExpression) => void;
-    }> | null
-  >(null);
+  const [MapContainer, setMapContainer] =
+    useState<React.ComponentType<MapContainerProps> | null>(null);
+  const [TileLayer, setTileLayer] =
+    useState<React.ComponentType<TileLayerProps> | null>(null);
+  const [LocationSelector, setLocationSelector] = useState<React.ComponentType<{
+    position: LatLngExpression | null;
+    setPosition: (pos: LatLngExpression) => void;
+  }> | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -61,7 +59,8 @@ export default function Step3Location({ location, setLocation }: Props) {
     <div>
       <h3 className="heading-secondary text-3xl">حدد موقع متجرك</h3>
       <p className="text-sm text-gray-700 mt-2 mb-7">
-        يرجى التحقق من صحة الموقع المحدد ليتمكن مندوبي شركات الشحن الوصول له بسهولة
+        يرجى التحقق من صحة الموقع المحدد ليتمكن مندوبي شركات الشحن الوصول له
+        بسهولة
       </p>
       <div className="space-y-6">
         {isClient && MapContainer && TileLayer && LocationSelector ? (
@@ -80,6 +79,7 @@ export default function Step3Location({ location, setLocation }: Props) {
         ) : (
           <p>جارٍ تحميل الخريطة...</p>
         )}
+        {errorProp && <p className="text-red-600 mt-2">{errorProp}</p>}
 
         {location && (
           <p className="mt-2 text-gray-700">
