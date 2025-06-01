@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+
 import { Cairo } from "next/font/google";
 import AOSProvider from "@/components/Provider/AOSProvider";
+import "jsvectormap/dist/jsvectormap.css";
+import "flatpickr/dist/flatpickr.min.css";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],

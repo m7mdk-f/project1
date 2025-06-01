@@ -22,9 +22,11 @@ if (typeof window !== "undefined") {
 type Props = {
   location: LatLngExpression | null;
   setLocation: (pos: LatLngExpression) => void;
+  errorProp?: string;
+
 };
 
-export default function Step3Location({ location, setLocation }: Props) {
+export default function Step3Location({ location, setLocation, errorProp }: Props) {
   const [isClient, setIsClient] = useState(false);
 
   const [MapContainer, setMapContainer] = useState<
@@ -80,6 +82,7 @@ export default function Step3Location({ location, setLocation }: Props) {
         ) : (
           <p>جارٍ تحميل الخريطة...</p>
         )}
+        {errorProp && <p className="text-red-600 mt-2">{errorProp}</p>}
 
         {location && (
           <p className="mt-2 text-gray-700">

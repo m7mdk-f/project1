@@ -1,9 +1,13 @@
 "use client";
 
+import DefaultLayout from '@/app/DefaultLayout';
+import ECommerce from '@/components/Dashboard/E-commerce';
 import React from 'react'
 
 export default function page() {
     return (
-        <div>page</div>
+        <DefaultLayout>
+            <ECommerce />
+        </DefaultLayout>
     )
 }
