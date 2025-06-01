@@ -104,7 +104,7 @@ export default function Step1StoreInfo({
         <label className="block mb-2 font-semibold text-gray-700">
           نوع الكيان
         </label>
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 flex-wrap">
           {["فرد", "مؤسسة", "شركة"].map((type) => (
             <button
               key={type}

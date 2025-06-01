@@ -19,7 +19,7 @@ export default function Question({
             <h2 className="md:text-lg sm:text-base text-sm font-semibold mb-4 text-right text-gray-700" dir="rtl">
                 {questionText}(مطلوب)
             </h2>
-            <div className="flex flex-wrap items-center sm:justify-start justify-center md:gap-6 gap-1">
+            <div className="flex flex-wrap justify-start  md:gap-6 gap-1">
                 {options.map((item, index) => (
                     <button
                         key={index}
