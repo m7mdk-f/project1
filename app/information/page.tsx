@@ -23,6 +23,8 @@ const steps: Step[] = [
   { number: 6, label: "توثيق المتجر" },
 ];
 
+
+
 const AccountSettings: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPlanId, setSelectedPlanId] = useState<number>(0);
@@ -38,14 +40,7 @@ const AccountSettings: React.FC = () => {
     paymentMethods: "",
     basketPackage: "",
     launchDate: "",
-    categories: [],
-    storeImage: null,
-    storeDescription: "",
   });
-  const [image, setImage] = useState<File | null>(null);
-  useEffect(() => {
-    setFormData((prev) => ({ ...prev, storeImage: image }));
-  }, [image]);
   const [questionFormData, setQuestionFormData] = useState<QustionFormData>({
     storeName: "",
     storeDomain: "",
@@ -63,6 +58,7 @@ const AccountSettings: React.FC = () => {
   const valid = useRef<boolean>(false);
   const numbervalid = useRef<number>(0);
 
+
   function checkfist() {
     numbervalid.current = 0;
     if (formData.storeName == "") {
@@ -70,61 +66,66 @@ const AccountSettings: React.FC = () => {
         ...prev,
         storeName: "اسم المتجر مطلوب",
       }));
-      valid.current = false;
+      valid.current = false
       numbervalid.current++;
-    } else {
+
+    }
+    else {
       if (formData.storeName.length < 3) {
         setFormErrors((prev) => ({
           ...prev,
           storeName: "يجب ان يحتوي على ثلاثة حروف او اكثر",
         }));
-        valid.current = false;
+        valid.current = false
         numbervalid.current++;
       }
     }
     if (formErrors.storeDomain !== "") {
-      valid.current = false;
+      valid.current = false
       numbervalid.current++;
+
     }
     if (formData.entityType == "") {
       setFormErrors((prev) => ({
         ...prev,
         entityType: "يجب اختيار نوع كيان المؤسسة ",
       }));
-      valid.current = false;
+      valid.current = false
       numbervalid.current++;
+
     }
-    if (numbervalid.current == 0) {
-      valid.current = true;
+    if (
+      numbervalid.current == 0
+
+    ) {
+      valid.current = true
+
     }
   }
 
   const handleNext = () => {
     if (currentStep === steps.length) {
-      console.log(formData);
-      const Data = new FormData();
+      console.log(formData)
+      const Data = new FormData()
       Data.append("name", formData.storeName);
-      Data.append("domain", formData.storeDomain);
+      Data.append("domain ", formData.storeDomain);
       Data.append("description", formData.storeDescription ?? "");
-      Data.append("packageid", selectedPlanId.toString());
-      Data.append("entityType", formData.entityType ?? "");
+      Data.append("packageid", selectedPlanId.toString()); formData.categories?.forEach(category => {
+        Data.append("categories", category);
+      });
+      console.log(selectedPlanId)
+      Data.append("Color ", "");
+      Data.append("AddressCode ", "");
 
-      formData.categories?.forEach((cat) => Data.append("CategoryIds", cat));
+      Data.append("EntityType", "");
+      console.log(Data)
 
-      if (formData.storeImage) {
-        Data.append("file", formData.storeImage);
-      } else {
-        console.error("No image file selected!");
-      }
-
-      CreateMarket(Data)
-        .then((d) => {
-          console.log(d);
-        })
-        .catch(() => {});
+      CreateMarket(Data).then(d => {
+        console.log(d)
+      }).catch(() => { });
     }
 
-    checkfist();
+    checkfist()
     if (currentStep === 3) {
       setFormData({
         ...formData,
@@ -150,6 +151,7 @@ const AccountSettings: React.FC = () => {
       }
       setCurrentStep(currentStep + 1);
     }
+
   };
 
   const handlePrev = () => {
@@ -168,13 +170,12 @@ const AccountSettings: React.FC = () => {
     });
 
     formData.storeDomain = transliterateArabicToEnglish(value);
+
+
   };
 
   useEffect(() => {
-    localStorage.setItem(
-      "token",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwiZW1haWwiOiJBaG1lZEBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiTWVyY2hhbnQgTWVyY2hhbnQiLCJyb2xlIjoiTWVyY2hhbnQiLCJuYmYiOjE3NDg2ODg2NTQsImV4cCI6MTc0ODc3NTA1NCwiaWF0IjoxNzQ4Njg4NjU0LCJpc3MiOiJTaG9wLmNvbSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNjMifQ.Xyw0PKIIHmCb1dG1ZuHJ09P4tG6ARF9LHKjluR3rnPw"
-    );
+    localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwiZW1haWwiOiJBaG1lZEBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiTWVyY2hhbnQgTWVyY2hhbnQiLCJyb2xlIjoiTWVyY2hhbnQiLCJuYmYiOjE3NDg2ODg2NTQsImV4cCI6MTc0ODc3NTA1NCwiaWF0IjoxNzQ4Njg4NjU0LCJpc3MiOiJTaG9wLmNvbSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNjMifQ.Xyw0PKIIHmCb1dG1ZuHJ09P4tG6ARF9LHKjluR3rnPw")
     const r = setTimeout(() => {
       if (formData.storeDomain.length < 3) {
         return;
@@ -189,18 +190,21 @@ const AccountSettings: React.FC = () => {
           if (butn1) {
             const butn2 = butn1.nextElementSibling;
             const butn3 = butn2?.nextElementSibling;
-            console.log(butn3);
+            console.log(butn3)
           }
-        } else {
+        }
+        else {
           setFormErrors((prev) => ({
             ...prev,
             storeDomain: "",
           }));
+
         }
-      });
-    }, 500);
-    return () => clearTimeout(r);
-  }, [formData.storeDomain]);
+      })
+    }, 500)
+    return () => clearTimeout(r)
+
+  }, [formData.storeDomain])
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -219,8 +223,9 @@ const AccountSettings: React.FC = () => {
                 ...prev,
                 entityType: "",
               }));
-              setQuestionFormData({ ...questionFormData, entityType: val });
-            }}
+              setQuestionFormData({ ...questionFormData, entityType: val })
+            }
+            }
           />
         );
       case 2:
@@ -284,13 +289,10 @@ const AccountSettings: React.FC = () => {
             {steps.map((step) => (
               <div
                 key={step.number}
-                className={`flex md:after:h-0 ${
-                  step.number == steps.length ? "after:h-0" : "after:h-0.5"
-                } after:content-[''] after:w-5   items-center mb-6 space-x-3 cursor-pointer select-none ${
-                  currentStep === step.number
-                    ? "text-indigo-600 font-semibold after:bg-indigo-600"
-                    : "text-gray-700 after:bg-gray-700"
-                }`}
+                className={`flex md:after:h-0 ${step.number == steps.length ? 'after:h-0' : 'after:h-0.5'} after:content-[''] after:w-5   items-center mb-6 space-x-3 cursor-pointer select-none ${currentStep === step.number
+                  ? "text-indigo-600 font-semibold after:bg-indigo-600"
+                  : "text-gray-700 after:bg-gray-700"
+                  }`}
                 onClick={() => {
                   if (step.number <= currentStep + 1)
                     setCurrentStep(step.number);
@@ -304,10 +306,9 @@ const AccountSettings: React.FC = () => {
               >
                 <div
                   className={`flex-shrink-0     w-10 h-10 flex items-center justify-center rounded-full border-2 mr-4
-                    ${
-                      completedSteps.includes(step.number)
-                        ? "bg-indigo-600 border-indigo-600 text-white"
-                        : currentStep === step.number
+                    ${completedSteps.includes(step.number)
+                      ? "bg-indigo-600 border-indigo-600 text-white"
+                      : currentStep === step.number
                         ? "border-indigo-600 text-indigo-600 font-bold bg-indigo-100"
                         : "border-gray-300 text-gray-600 bg-white"
                     }
@@ -332,7 +333,7 @@ const AccountSettings: React.FC = () => {
                       />
                     </svg>
                   ) : (
-                    <span>{step.number}</span>
+                    <span >{step.number}</span>
                   )}
                 </div>
                 <span className="md:block hidden">{step.label}</span>
@@ -356,6 +357,7 @@ const AccountSettings: React.FC = () => {
             type="button"
             className="px-6 py-3 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNext}
+
           >
             {currentStep === steps.length ? "دخول" : "التالي"}
           </button>
