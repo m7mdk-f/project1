@@ -1,11 +1,12 @@
-import Information from "./information/page";
-import Register from "./register/page";
-import "leaflet/dist/leaflet.css";
+import Link from "next/link";
 
 export default function Home() {
   return (
-   <div>
-      <Information />
-   </div>
+    <div>
+      <Link href={"/login"}>تسجيل الدخول</Link>
+      <br />
+      <Link href={"/register"}>تسجيل</Link>
+
+    </div>
   );
 }

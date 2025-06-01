@@ -26,6 +26,7 @@ const InputField = ({
     <div className="relative w-full">
       <label className="block text-sm text-blue-500 mb-2">{label}</label>
       <input
+        required
         type={type}
         placeholder={placeholder}
         value={value}

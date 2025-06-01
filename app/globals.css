@@ -5,6 +5,12 @@ html {
     scroll-behavior: smooth;
 }
 
+.centeDiv{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;

@@ -11,6 +11,11 @@ import LoadingCircle from "@/components/LoadingCircle";
 import { Registerapi } from "@/components/api/api";
 import Image from "next/image";
 
+interface ApiError {
+  code: string;
+  [key: string]: unknown;
+}
+
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,38 +28,90 @@ export default function Register() {
   const router = useRouter();
 
   useEffect(() => {
-    localStorage.setItem('token', "")
-  }, [])
+    localStorage.setItem("token", "");
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegisterError(null);
-    setLoading(true)
 
-    Registerapi(name, email, selectedCode, phone, password).then(() => {
-      router.push("/checkyouremail");
-    }).catch((error) => {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          if (error.response.status === 409) {
-            setRegisterError(
-              "هذا البريد الإلكتروني مستخدم مسبقًا. حاول تسجيل الدخول."
-            );
+    if (!phone.trim()) {
+      setRegisterError("يرجى إدخال رقم الجوال.");
+      return;
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      setRegisterError("يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل.");
+      return;
+    }
+
+    if (!/(?=.*\d)/.test(password)) {
+      setRegisterError("يجب أن تحتوي كلمة المرور على رقم واحد على الأقل.");
+      return;
+    }
+    if (!/^\d+$/.test(phone)) {
+      setRegisterError("رقم الجوال يجب أن يحتوي على أرقام فقط.");
+      return;
+    }
+
+    if (phone.length < 7 || phone.length > 15) {
+      return setRegisterError("يرجى إدخال رقم جوال صحيح مكون من 7 إلى 15 رقم.");
+    }
+
+    setLoading(true);
+
+    const fullPhoneNumber = selectedCode + phone;
+
+    Registerapi(name, email, selectedCode, fullPhoneNumber, password)
+      .then(() => {
+        router.push("/checkyouremail");
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            if (error.response.status === 409) {
+              setRegisterError(
+                "هذا البريد الإلكتروني مستخدم مسبقًا. حاول تسجيل الدخول."
+              );
+            } else if (Array.isArray(error.response.data)) {
+              const errors = error.response.data as ApiError[];
+              const emailError = errors.find(
+                (e: ApiError) =>
+                  e.code === "DuplicateEmail" || e.code === "DuplicateUserName"
+              );
+
+              if (emailError) {
+                setRegisterError(
+                  "هذا البريد الإلكتروني مستخدم مسبقًا. حاول تسجيل الدخول."
+                );
+              } else {
+                setRegisterError("فشل التسجيل: حدثت أخطاء أخرى.");
+              }
+            } else if (typeof error.response.data === "object") {
+              const data = error.response.data;
+
+              const allErrors = Object.values(data)
+                .flat()
+                .filter((msg) => typeof msg === "string");
+
+              if (allErrors.length > 0) {
+                setRegisterError(allErrors[0]);
+              } else {
+                setRegisterError("حدثت أخطاء في البيانات المدخلة.");
+              }
+            } else {
+              setRegisterError(
+                `فشل التسجيل: ${JSON.stringify(error.response.data)}`
+              );
+            }
           } else {
-            setRegisterError(
-              `فشل التسجيل: ${JSON.stringify(error.response.data)}`
-            );
+            setRegisterError("حدث خطأ أثناء الاتصال بالخادم.");
           }
-        } else {
-          setRegisterError("حدث خطأ أثناء الاتصال بالخادم.");
         }
-      }
-    }).finally(() => {
-      setLoading(false);
-
-    })
-
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
-
 
   return (
     <section
@@ -63,10 +120,7 @@ export default function Register() {
     >
       <div className="py-6 px-2 w-full ">
         <div className="flex justify-between border hover:shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] border-slate-300 rounded-lg items-center gap-10 lg:max-w-6xl mx-auto md:max-w-5xl w-full p-0 md:p-4">
-          <div
-            data-aos="fade-left"
-            className="p-6 md:w-1/2 w-full "
-          >
+          <div data-aos="fade-left" className="p-6 md:w-1/2 w-full ">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="mb-10 text-center">
                 <div className="w-full relative h-[8em] overflow-hidden">
@@ -115,9 +169,7 @@ export default function Register() {
               />
 
               {registerError && (
-                <p className="text-red-500 text-sm text-right">
-                  {registerError}
-                </p>
+                <p className="text-red-500 text-sm text-right">{registerError}</p>
               )}
 
               <div className="!mt-10">
@@ -129,7 +181,13 @@ export default function Register() {
                     : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
-                  {loading ? <div className="flex justify-center"> <LoadingCircle size={30} /></div> : "تسجيل"}
+                  {loading ? (
+                    <div className="flex justify-center">
+                      <LoadingCircle size={30} />
+                    </div>
+                  ) : (
+                    "تسجيل"
+                  )}
                 </button>
 
                 <p className="text-sm mt-4 text-center text-slate-500">

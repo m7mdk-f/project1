@@ -63,3 +63,26 @@ export const CreateMarket = async function (formData: FormData) {
     throw error;
   }
 };
+
+export const checkPageUrl = async (url:string ) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No auth token found in localStorage");
+    }
+
+    const response = await axios.get(
+      `${baseurl}/api/CheckPages?url=${url}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to check page url:", error);
+    throw error;
+  }
+};
