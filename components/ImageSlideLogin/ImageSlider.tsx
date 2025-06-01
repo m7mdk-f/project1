@@ -6,7 +6,6 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 
 import { EffectCards } from "swiper/modules";
-import { FaStar, FaStarHalf } from "react-icons/fa";
 import Image from "next/image";
 
 const lstImg = [

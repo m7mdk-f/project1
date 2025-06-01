@@ -1,65 +1,69 @@
 "use client";
+
+import { LatLngExpression } from "leaflet";
+import L from "leaflet";
 import React, { useEffect, useState } from "react";
+import type { MapContainerProps, TileLayerProps } from "react-leaflet";
+
+if (typeof window !== "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl:
+      "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png",
+    iconUrl:
+      "https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png",
+    shadowUrl:
+      "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
+  });
+}
 
 type Props = {
-  location: any; // Use LatLngExpression type if you want (imported from leaflet)
-  setLocation: (pos: any) => void;
-  address: string;
-  setAddress: (val: string) => void;
-  district: string;
-  setDistrict: (val: string) => void;
-  street: string;
-  setStreet: (val: string) => void;
-  postalCode: string;
-  setPostalCode: (val: string) => void;
+  location: LatLngExpression | null;
+  setLocation: (pos: LatLngExpression) => void;
+  errorProp?: string;
+
 };
 
-export default function Step3Location({
-  location,
-  setLocation,
-  address,
-  setAddress,
-  district,
-  setDistrict,
-  street,
-  setStreet,
-  postalCode,
-  setPostalCode,
-}: Props) {
+export default function Step3Location({ location, setLocation, errorProp }: Props) {
   const [isClient, setIsClient] = useState(false);
+
+  const [MapContainer, setMapContainer] = useState<
+    React.ComponentType<MapContainerProps> | null
+  >(null);
+  const [TileLayer, setTileLayer] = useState<
+    React.ComponentType<TileLayerProps> | null
+  >(null);
+  const [LocationSelector, setLocationSelector] = useState<
+    React.ComponentType<{
+      position: LatLngExpression | null;
+      setPosition: (pos: LatLngExpression) => void;
+    }> | null
+  >(null);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Only import leaflet and related components when in the browser (client)
-  let MapContainer, TileLayer, LocationSelector;
-  let L;
-  if (isClient) {
-    // Dynamic require/import inside useEffect won't work for hooks usage, so just require here
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const leaflet = require("react-leaflet");
-    MapContainer = leaflet.MapContainer;
-    TileLayer = leaflet.TileLayer;
-    LocationSelector = require("./LocationSelector").default;
+  useEffect(() => {
+    if (isClient) {
+      import("react-leaflet").then((leaflet) => {
+        setMapContainer(() => leaflet.MapContainer);
+        setTileLayer(() => leaflet.TileLayer);
+      });
 
-    // Leaflet itself
-    L = require("leaflet");
-
-    // Setup Leaflet icons only once
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-      iconUrl: require("leaflet/dist/images/marker-icon.png"),
-      shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-    });
-  }
+      import("./LocationSelector").then((mod) => {
+        setLocationSelector(() => mod.default);
+      });
+    }
+  }, [isClient]);
 
   return (
     <div>
       <h3 className="heading-secondary text-3xl">حدد موقع متجرك</h3>
       <p className="text-sm text-gray-700 mt-2 mb-7">
-        يرجى التحقق من صحة الموقع المحدد ليتمكن منندوبي شركات الشحن الوصول له
-        بسهولة
+        يرجى التحقق من صحة الموقع المحدد ليتمكن مندوبي شركات الشحن الوصول له بسهولة
       </p>
       <div className="space-y-6">
         {isClient && MapContainer && TileLayer && LocationSelector ? (
@@ -78,6 +82,7 @@ export default function Step3Location({
         ) : (
           <p>جارٍ تحميل الخريطة...</p>
         )}
+        {errorProp && <p className="text-red-600 mt-2">{errorProp}</p>}
 
         {location && (
           <p className="mt-2 text-gray-700">
@@ -87,52 +92,6 @@ export default function Step3Location({
               : `${location.lat.toFixed(5)}, ${location.lng.toFixed(5)}`}
           </p>
         )}
-
-        <div className="flex flex-wrap gap-4">
-          <div className="w-full sm:w-[48%]">
-            <label className="block mb-1 font-semibold">العنوان</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="أدخل العنوان"
-            />
-          </div>
-
-          <div className="w-full sm:w-[48%]">
-            <label className="block mb-1 font-semibold">الحي</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-              placeholder="أدخل اسم الحي"
-            />
-          </div>
-
-          <div className="w-full sm:w-[48%]">
-            <label className="block mb-1 font-semibold">الشارع</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={street}
-              onChange={(e) => setStreet(e.target.value)}
-              placeholder="أدخل اسم الشارع"
-            />
-          </div>
-
-          <div className="w-full sm:w-[48%]">
-            <label className="block mb-1 font-semibold">الرمز البريدي</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={postalCode}
-              onChange={(e) => setPostalCode(e.target.value)}
-              placeholder="أدخل الرمز البريدي"
-            />
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -60,7 +60,7 @@ export default function BusinessExperienceForm({ setAcive, active }: { active: b
                 setCheckedItems([]);
             }
             PostAboutme(answer1 || false, answer1 || false, answer1 || false, submit ? [] : checkedItems).then(() => {
-                Route.push("marwanpage");
+                Route.push("information");
             }).catch((e) => alert(e)).finally(() => setloading(false))
         }
         else

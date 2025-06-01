@@ -41,6 +41,8 @@ const PhoneField = ({
           {selectedCode}
         </div>
         <input
+          required
+
           type="tel"
           value={phone}
           onChange={onPhoneChange}

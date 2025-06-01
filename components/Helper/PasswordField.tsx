@@ -12,23 +12,23 @@ type Props = {
 const PasswordField = ({ password, onChange, onValidChange }: Props) => {
   const [show, setShow] = useState(false);
   const [strength, setStrength] = useState(0);
-
   const checkStrength = (value: string) => {
     onChange(value);
 
-    const rules = [/[a-z]/, /[A-Z]/, /[0-9]/, /[!@#\$%\^&\*]/, /.{8,}/];
+    const hasUppercase = /[A-Z]/.test(value);
+
+    const rules = [/[a-z]/, /[0-9]/, /[!@#\$%\^&\*]/, /.{8,}/];
     const score = rules.reduce(
       (acc, rule) => (rule.test(value) ? acc + 1 : acc),
-      0
+      hasUppercase ? 1 : 0
     );
 
     setStrength(score);
 
     if (typeof onValidChange === "function") {
-      onValidChange(score >= 4);
+      onValidChange(score >= 4 && hasUppercase);
     }
   };
-
   const getBarColor = () => {
     if (strength <= 2) return "bg-red-500";
     if (strength === 3) return "bg-yellow-500";

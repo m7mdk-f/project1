@@ -9,6 +9,8 @@ type Props = {
   setBillingCycle: (val: "month" | "year") => void;
   selectedPlanId: number | null;
   setSelectedPlanId: (id: number) => void;
+  formErrors: Record<string, string>;
+
 };
 
 export default function Step5Plans({
@@ -16,6 +18,8 @@ export default function Step5Plans({
   setBillingCycle,
   selectedPlanId,
   setSelectedPlanId,
+  formErrors
+
 }: Props) {
   const [plan, setPlan] = useState<Plan[]>([]);
   const [loading, setLoading] = useState<boolean>(true)
@@ -131,9 +135,15 @@ export default function Step5Plans({
                     </div>
                   );
                 })}
+
               </div>
             </div>
-          </div>
+            {formErrors.selectedPlanId && (
+              <p className="text-red-600 mt-7 mb-2 text-center">
+                {formErrors.selectedPlanId}
+              </p>
+            )}
+          </div >
       }
     </>
   );

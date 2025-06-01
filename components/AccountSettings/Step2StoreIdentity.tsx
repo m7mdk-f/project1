@@ -11,6 +11,7 @@ import { ICategory } from "../models/Models";
 type Props = {
   categories?: string[];
   storeImage?: File | null;
+  formErrors: Record<string, string>;
   storeDescription?: string;
   onCategoriesChange: (values: string[]) => void;
   onImageChange: (file: File | null) => void;
@@ -21,6 +22,7 @@ export default function Step2StoreIdentity({
   categories,
   storeImage,
   storeDescription,
+  formErrors,
   onCategoriesChange,
   onImageChange,
   onDescriptionChange,
@@ -57,6 +59,7 @@ export default function Step2StoreIdentity({
             <div>
               <label className="block mb-2 font-semibold text-gray-700">
                 ما فئة تجارتكم
+                (اختياري)
               </label>
               <Select
                 isMulti
@@ -74,6 +77,9 @@ export default function Step2StoreIdentity({
                 classNamePrefix="select"
                 noOptionsMessage={() => "لا توجد خيارات"}
               />
+              {formErrors.categories && (
+                <p className="text-red-600 mt-1">{formErrors.categories}</p>
+              )}
             </div>
 
             <div>
@@ -81,6 +87,9 @@ export default function Step2StoreIdentity({
                 صورة الشعار (اختياري)
               </label>
               <ImageDropzone image={storeImage} setImage={onImageChange} />
+              {formErrors.storeImage && (
+                <p className="text-red-600 mt-1">{formErrors.storeImage}</p>
+              )}
             </div>
 
             <div>
@@ -93,6 +102,11 @@ export default function Step2StoreIdentity({
                 placeholder="اكتب وصفاً مختصراً لمتجرك"
                 className="w-full p-2 border rounded resize-y min-h-[100px]"
               />
+              {formErrors.storeDescription && (
+                <p className="text-red-600 mt-1">
+                  {formErrors.storeDescription}
+                </p>
+              )}
             </div>
           </div>
         </div>

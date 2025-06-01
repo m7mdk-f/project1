@@ -2,7 +2,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Step1StoreInfo from "@/components/AccountSettings/Step1StoreInfo";
 import Step2StoreIdentity from "@/components/AccountSettings/Step2StoreIdentity";
-import Step3Location from "@/components/AccountSettings/Step3Location";
+import dynamic from "next/dynamic";
+
+const Step3Location = dynamic(
+  () => import("@/components/AccountSettings/Step3Location"),
+  { ssr: false }
+);
 import Step5Plans from "@/components/AccountSettings/Step5Plans";
 import "leaflet/dist/leaflet.css";
 import {
@@ -13,6 +18,9 @@ import {
 import { LatLngExpression } from "leaflet";
 import { transliterateArabicToEnglish } from "@/components/api/functionReplacyAtoE";
 import { CheckDomain, CreateMarket } from "@/components/api/Market";
+import { useRouter } from "next/navigation";
+import LoadingCircle from "@/components/LoadingCircle";
+import axios from "axios";
 
 const steps: Step[] = [
   { number: 1, label: "معلومات المتجر" },
@@ -22,8 +30,6 @@ const steps: Step[] = [
   { number: 5, label: "الدفع الالكتروني" },
   { number: 6, label: "توثيق المتجر" },
 ];
-
-
 
 const AccountSettings: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -40,7 +46,11 @@ const AccountSettings: React.FC = () => {
     paymentMethods: "",
     basketPackage: "",
     launchDate: "",
+    categories: [],
+    storeImage: null,
+    storeDescription: "",
   });
+
   const [questionFormData, setQuestionFormData] = useState<QustionFormData>({
     storeName: "",
     storeDomain: "",
@@ -49,15 +59,13 @@ const AccountSettings: React.FC = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const [location, setLocation] = useState<LatLngExpression | null>(null);
-  const [address, setAddress] = useState("");
-  const [district, setDistrict] = useState("");
-  const [street, setStreet] = useState("");
-  const [postalCode, setPostalCode] = useState("");
+
+  const [loading, setloading] = useState<boolean>(false);
 
   const [billingCycle, setBillingCycle] = useState<"month" | "year">("month");
   const valid = useRef<boolean>(false);
   const numbervalid = useRef<number>(0);
-
+  const Router = useRouter();
 
   function checkfist() {
     numbervalid.current = 0;
@@ -66,74 +74,161 @@ const AccountSettings: React.FC = () => {
         ...prev,
         storeName: "اسم المتجر مطلوب",
       }));
-      valid.current = false
+      valid.current = false;
       numbervalid.current++;
-
-    }
-    else {
+    } else {
       if (formData.storeName.length < 3) {
         setFormErrors((prev) => ({
           ...prev,
           storeName: "يجب ان يحتوي على ثلاثة حروف او اكثر",
         }));
-        valid.current = false
+        valid.current = false;
         numbervalid.current++;
       }
     }
     if (formErrors.storeDomain !== "") {
-      valid.current = false
+      valid.current = false;
       numbervalid.current++;
-
+    }
+    if (formData.storeDomain == "") {
+      setFormErrors((prev) => ({
+        ...prev,
+        storeDomain: "يجب اختيار نطاق خاص بالمتجر",
+      }));
+      valid.current = false;
+      numbervalid.current++;
     }
     if (formData.entityType == "") {
       setFormErrors((prev) => ({
         ...prev,
         entityType: "يجب اختيار نوع كيان المؤسسة ",
       }));
-      valid.current = false
+      valid.current = false;
       numbervalid.current++;
-
     }
-    if (
-      numbervalid.current == 0
-
-    ) {
-      valid.current = true
-
+    if (numbervalid.current == 0) {
+      valid.current = true;
     }
   }
 
-  const handleNext = () => {
-    if (currentStep === steps.length) {
-      console.log(formData)
-      const Data = new FormData()
-      Data.append("name", formData.storeName);
-      Data.append("domain ", formData.storeDomain);
-      Data.append("description", formData.storeDescription ?? "");
-      Data.append("packageid", selectedPlanId.toString()); formData.categories?.forEach(category => {
-        Data.append("categories", category);
-      });
+  function validateStep2() {
+    const errors: Record<string, string> = {};
 
-
-      CreateMarket(Data).then(d => {
-        console.log(d)
-      }).catch(() => { });
+    if (!formData.categories || formData.categories.length === 0) {
+      errors.categories = "الرجاء اختيار فئة واحدة على الأقل";
     }
 
-    checkfist()
+    if (
+      formData.storeDescription &&
+      formData.storeDescription.trim().length > 0 &&
+      formData.storeDescription.trim().length < 10
+    ) {
+      errors.storeDescription = "الوصف يجب أن يكون 10 أحرف على الأقل";
+    }
+
+    if (formData.storeImage) {
+      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+      if (!allowedTypes.includes(formData.storeImage.type)) {
+        errors.storeImage = "نوع الملف غير مدعوم (jpg, jpeg, png فقط)";
+      }
+      const maxSizeMB = 5;
+      if (formData.storeImage.size / 1024 / 1024 > maxSizeMB) {
+        errors.storeImage = `حجم الملف يجب ألا يتجاوز ${maxSizeMB} ميغابايت`;
+      }
+    }
+
+    setFormErrors((prev) => ({ ...prev, ...errors }));
+
+    return Object.keys(errors).length === 0;
+  }
+
+  const onclickButton = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      storeDomain: value.trim(),
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentStep === 2) {
+      const step2Valid = validateStep2();
+      if (!step2Valid) return;
+    }
+
+    if (currentStep === 3) {
+      if (!location) {
+        setFormErrors((prev) => ({
+          ...prev,
+          shipmentLocation: "يرجى تحديد موقع المتجر على الخريطة",
+        }));
+        return;
+      } else {
+        setFormErrors((prev) => {
+          const copy = { ...prev };
+          delete copy.shipmentLocation;
+          return copy;
+        });
+      }
+    }
+
+    if (currentStep === 5) {
+      if (!selectedPlanId || selectedPlanId === 0) {
+        setFormErrors((prev) => ({
+          ...prev,
+          selectedPlanId: "الرجاء اختيار باقة للاشتراك بها",
+        }));
+        return;
+      } else {
+        setFormErrors((prev) => {
+          const copy = { ...prev };
+          delete copy.selectedPlanId;
+          return copy;
+        });
+      }
+    }
+
+    if (currentStep === steps.length) {
+      setloading(true);
+      const Data = new FormData();
+      Data.append("name", formData.storeName);
+      Data.append("domain", formData.storeDomain);
+      Data.append("description", formData.storeDescription ?? "");
+      Data.append("packageid", selectedPlanId.toString());
+      Data.append("entityType", formData.entityType ?? "");
+      if (location) {
+        if (Array.isArray(location)) {
+          Data.append("Latitude", location[0].toString());
+          Data.append("Longitude", location[1].toString());
+        } else {
+          Data.append("Latitude", location.lat.toString());
+          Data.append("Longitude", location.lng.toString());
+        }
+      }
+
+      formData.categories?.forEach((cat) => Data.append("CategoryIds", cat));
+
+      if (formData.storeImage) {
+        Data.append("file", formData.storeImage);
+      } else {
+      }
+
+      CreateMarket(Data)
+        .then(() => {
+          Router.push("/dashboard");
+        })
+        .catch((e) => {
+          if (axios.isAxiosError(e)) {
+            alert(e);
+          }
+        })
+        .finally(() => setloading(false));
+    }
+
+    checkfist();
     if (currentStep === 3) {
       setFormData({
         ...formData,
-        shipmentLocation: JSON.stringify({
-          lat:
-            location && !Array.isArray(location) ? location.lat : location?.[0],
-          lng:
-            location && !Array.isArray(location) ? location.lng : location?.[1],
-          address,
-          district,
-          street,
-          postalCode,
-        }),
+        shipmentLocation: location?.toString() ?? "",
       });
     }
     if (valid.current == false) {
@@ -146,7 +241,6 @@ const AccountSettings: React.FC = () => {
       }
       setCurrentStep(currentStep + 1);
     }
-
   };
 
   const handlePrev = () => {
@@ -164,13 +258,52 @@ const AccountSettings: React.FC = () => {
       return copy;
     });
 
-    formData.storeDomain = transliterateArabicToEnglish(value);
+    setFormData((prev) => ({
+      ...prev,
+      storeDomain: transliterateArabicToEnglish(value),
+    }));
+  };
 
+  const handleCategoriesChange = (vals: string[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      categories: vals,
+    }));
 
+    setFormErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.categories;
+      return copy;
+    });
+  };
+
+  const handleImageChange = (file: File | null) => {
+    setFormData((prev) => ({
+      ...prev,
+      storeImage: file,
+    }));
+
+    setFormErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.storeImage;
+      return copy;
+    });
+  };
+
+  const handleDescriptionChange = (val: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      storeDescription: val,
+    }));
+
+    setFormErrors((prev) => {
+      const copy = { ...prev };
+      delete copy.storeDescription;
+      return copy;
+    });
   };
 
   useEffect(() => {
-    localStorage.setItem("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIyIiwiZW1haWwiOiJBaG1lZEBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiTWVyY2hhbnQgTWVyY2hhbnQiLCJyb2xlIjoiTWVyY2hhbnQiLCJuYmYiOjE3NDg2ODg2NTQsImV4cCI6MTc0ODc3NTA1NCwiaWF0IjoxNzQ4Njg4NjU0LCJpc3MiOiJTaG9wLmNvbSIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNjMifQ.Xyw0PKIIHmCb1dG1ZuHJ09P4tG6ARF9LHKjluR3rnPw")
     const r = setTimeout(() => {
       if (formData.storeDomain.length < 3) {
         return;
@@ -183,28 +316,40 @@ const AccountSettings: React.FC = () => {
           }));
           const butn1 = document.getElementById("butn");
           if (butn1) {
+            butn1.innerHTML = d.domain[0];
             const butn2 = butn1.nextElementSibling;
             const butn3 = butn2?.nextElementSibling;
-            console.log(butn3)
+            if (butn2) {
+              butn2.innerHTML = d.domain[1];
+            }
+            if (butn3) {
+              butn3.innerHTML = d.domain[2];
+            }
           }
-        }
-        else {
+        } else {
+          const butn1 = document.getElementById("butn");
+          if (butn1) {
+            butn1.innerHTML = "";
+            const butn2 = butn1.nextElementSibling;
+            const butn3 = butn2?.nextElementSibling;
+            if (butn2) butn2.innerHTML = "";
+            if (butn3) butn3.innerHTML = "";
+          }
           setFormErrors((prev) => ({
             ...prev,
             storeDomain: "",
           }));
-
         }
-      })
-    }, 500)
-    return () => clearTimeout(r)
-
-  }, [formData.storeDomain])
+      });
+    }, 400);
+    return () => clearTimeout(r);
+  }, [formData.storeDomain]);
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
           <Step1StoreInfo
+            onclickButton={onclickButton}
             formData={formData}
             questionFormData={questionFormData}
             formErrors={formErrors}
@@ -218,9 +363,8 @@ const AccountSettings: React.FC = () => {
                 ...prev,
                 entityType: "",
               }));
-              setQuestionFormData({ ...questionFormData, entityType: val })
-            }
-            }
+              setQuestionFormData({ ...questionFormData, entityType: val });
+            }}
           />
         );
       case 2:
@@ -229,15 +373,10 @@ const AccountSettings: React.FC = () => {
             categories={formData.categories}
             storeImage={formData.storeImage}
             storeDescription={formData.storeDescription}
-            onCategoriesChange={(vals) =>
-              setFormData({ ...formData, categories: vals })
-            }
-            onImageChange={(file) =>
-              setFormData({ ...formData, storeImage: file })
-            }
-            onDescriptionChange={(val) =>
-              setFormData({ ...formData, storeDescription: val })
-            }
+            formErrors={formErrors}
+            onCategoriesChange={handleCategoriesChange}
+            onImageChange={handleImageChange}
+            onDescriptionChange={handleDescriptionChange}
           />
         );
       case 3:
@@ -245,14 +384,7 @@ const AccountSettings: React.FC = () => {
           <Step3Location
             location={location}
             setLocation={setLocation}
-            address={address}
-            setAddress={setAddress}
-            district={district}
-            setDistrict={setDistrict}
-            street={street}
-            setStreet={setStreet}
-            postalCode={postalCode}
-            setPostalCode={setPostalCode}
+            errorProp={formErrors.shipmentLocation}
           />
         );
       case 5:
@@ -262,6 +394,7 @@ const AccountSettings: React.FC = () => {
             setBillingCycle={setBillingCycle}
             selectedPlanId={selectedPlanId}
             setSelectedPlanId={setSelectedPlanId}
+            formErrors={formErrors}
           />
         );
       default:
@@ -284,9 +417,10 @@ const AccountSettings: React.FC = () => {
             {steps.map((step) => (
               <div
                 key={step.number}
-                className={`flex md:after:h-0 ${step.number == steps.length ? 'after:h-0' : 'after:h-0.5'} after:content-[''] after:w-5   items-center mb-6 space-x-3 cursor-pointer select-none ${currentStep === step.number
-                  ? "text-indigo-600 font-semibold after:bg-indigo-600"
-                  : "text-gray-700 after:bg-gray-700"
+                className={`flex md:after:h-0 ${step.number == steps.length ? "after:h-0" : "after:h-0.5"
+                  } after:content-[''] after:w-5   items-center mb-6 space-x-3 cursor-pointer select-none ${currentStep === step.number
+                    ? "text-indigo-600 font-semibold after:bg-indigo-600"
+                    : "text-gray-700 after:bg-gray-700"
                   }`}
                 onClick={() => {
                   if (step.number <= currentStep + 1)
@@ -328,7 +462,7 @@ const AccountSettings: React.FC = () => {
                       />
                     </svg>
                   ) : (
-                    <span >{step.number}</span>
+                    <span>{step.number}</span>
                   )}
                 </div>
                 <span className="md:block hidden">{step.label}</span>
@@ -352,9 +486,15 @@ const AccountSettings: React.FC = () => {
             type="button"
             className="px-6 py-3 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleNext}
-
+            disabled={loading}
           >
-            {currentStep === steps.length ? "دخول" : "التالي"}
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <LoadingCircle size={10} />
+              </div>
+            ) : (
+              <>{currentStep === steps.length ? "دخول" : "التالي"}</>
+            )}
           </button>
         </div>
       </div>
