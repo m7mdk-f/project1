@@ -60,7 +60,7 @@ export default function Step1StoreInfo({
           </label>
           <p className="text-gray-600 mb-2 text-xs">سيكون هو رابط المتجر الذي يمكن للعملاء الدخول عليه للطلب</p>
 
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <div className="flex items-center flex-wrap gap-1 rtl:space-x-reverse">
             <input
               type="text"
               value={formData.storeDomain}
@@ -104,7 +104,7 @@ export default function Step1StoreInfo({
         <label className="block mb-2 font-semibold text-gray-700">
           نوع الكيان
         </label>
-        <div className="flex space-x-4 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {["فرد", "مؤسسة", "شركة"].map((type) => (
             <button
               key={type}
