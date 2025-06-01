@@ -10,7 +10,15 @@ html {
     justify-content: center;
     align-items: center;
 }
+.bg-black {
+    --tw-bg-opacity: 1;
+    background-color: rgb(28 36 52 / var(--tw-bg-opacity, 1));
+}
 
+.border-stroke {
+    --tw-border-opacity: 1;
+    border-color: rgb(226 232 240 / var(--tw-border-opacity, 1));
+}
 .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -19,10 +27,73 @@ html {
     text-overflow: ellipsis;
     white-space: normal;
 }
+.bg-meta-1 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(220 53 69 / var(--tw-bg-opacity, 1));
+}
+.bg-gray {
+    --tw-bg-opacity: 1;
+    background-color: rgb(239 244 251 / var(--tw-bg-opacity, 1));
+}
+.w-8\.5 {
+    width: 2.125rem;
+}
 
+.text-black {
+    --tw-text-opacity: 1;
+    color: rgb(28 36 52 / var(--tw-text-opacity, 1));
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.text-bodydark1 {
+    --tw-text-opacity: 1;
+    color: rgb(222 228 238 / var(--tw-text-opacity, 1));
+}
+.text-black {
+    --tw-text-opacity: 1;
+    color: rgb(28 36 52 / var(--tw-text-opacity, 1));
+}
+.text-title-md {
+    font-size: 24px;
+    line-height: 30px;
+}
+.text-meta-3 {
+    --tw-text-opacity: 1;
+    color: rgb(16 185 129 / var(--tw-text-opacity, 1));
+}
+.text-meta-5 {
+    --tw-text-opacity: 1;
+    color: rgb(37 154 230 / var(--tw-text-opacity, 1));
+}
+.bg-meta-2 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(239 242 247 / var(--tw-bg-opacity, 1));
+}
+.text-secondary {
+    --tw-text-opacity: 1;
+    color: rgb(128 202 238 / var(--tw-text-opacity, 1));
+}
+.bg-primary {
+    --tw-bg-opacity: 1;
+    background-color: rgb(60 80 224 / var(--tw-bg-opacity, 1));
+}
+.text-primary {
+    --tw-text-opacity: 1;
+    color: rgb(60 80 224 / var(--tw-text-opacity, 1));
+}
+.bg-secondary {
+    --tw-bg-opacity: 1;
+    background-color: rgb(128 202 238 / var(--tw-bg-opacity, 1));
+}
 body {
     font-family: "Cairo", sans-serif;
     direction: rtl;
+    --tw-bg-opacity: 1;
+        background-color: rgb(241 245 249 / var(--tw-bg-opacity, 1));
+        color: rgb(100 116 139 / var(--tw-text-opacity, 1));
+        overflow-x: hidden;
 }
 
 @layer utilities {

@@ -11,6 +11,7 @@ import { ICategory } from "../models/Models";
 type Props = {
   categories?: string[];
   storeImage?: File | null;
+  formErrors: Record<string, string>;
   storeDescription?: string;
   formErrors: Record<string, string>;
   onCategoriesChange: (values: string[]) => void;
