@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const baseurl="http://jendou-first.runasp.net";
+export const baseurl="https://jendou-first.runasp.net";
 export const  login=async function (email:string,password:string){
     const response = await axios.post(`${baseurl}/Login`, {
         Email: email,
