@@ -19,7 +19,7 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    localStorage.setItem('token', "")
+    localStorage.setItem("token", "");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(email));
   }, [email]);
@@ -29,30 +29,30 @@ export default function Login() {
     setLoginError(null);
     setLoading(true);
 
-    login(email, password).then(() => {
-      router.push("/steps");
-    }).catch((error) => {
-      if (error.response) {
-        const message = error.response.data;
+    login(email, password)
+      .then(() => {
+        router.push("/steps");
+      })
+      .catch((error) => {
+        if (error.response) {
+          const message = error.response.data;
 
-        if (typeof message === "string") {
-          if (message.includes("Error in Email or Password")) {
-            setLoginError("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+          if (typeof message === "string") {
+            if (message.includes("Error in Email or Password")) {
+              setLoginError("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+            } else {
+              setLoginError("حدث خطأ: " + message);
+            }
           } else {
-            setLoginError("حدث خطأ: " + message);
+            setLoginError("فشل تسجيل الدخول. الرجاء المحاولة لاحقاً.");
           }
         } else {
-          setLoginError("فشل تسجيل الدخول. الرجاء المحاولة لاحقاً.");
+          setLoginError("حدث خطأ أثناء الاتصال بالخادم.");
         }
-      } else {
-        setLoginError("حدث خطأ أثناء الاتصال بالخادم.");
-      }
-
-    }).finally(() => {
-      setLoading(false);
-    })
-
-
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -62,10 +62,7 @@ export default function Login() {
     >
       <div className="py-6 px-2 w-full ">
         <div className="flex justify-between border hover:shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] border-slate-300 rounded-lg items-center gap-10  lglg:max-w-6xl mx-auto md:max-w-5xl  w-full  p-0 md:p-4">
-          <div
-            data-aos="fade-left"
-            className="p-6  md:w-1/2  w-full"
-          >
+          <div data-aos="fade-left" className="p-6  md:w-1/2  w-full">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="mb-12 text-center">
                 <div className="w-full relative h-[8em] overflow-hidden">
@@ -146,7 +143,14 @@ export default function Login() {
                     : "bg-blue-600 hover:bg-blue-700"
                     }`}
                 >
-                  {loading ? <div className="flex justify-center"> <LoadingCircle size={30} /></div> : "تسجيل الدخول"}
+                  {loading ? (
+                    <div className="flex justify-center">
+                      {" "}
+                      <LoadingCircle size={30} />
+                    </div>
+                  ) : (
+                    "تسجيل الدخول"
+                  )}
                 </button>
 
                 <p className="text-sm !mt-6 text-center text-slate-500">

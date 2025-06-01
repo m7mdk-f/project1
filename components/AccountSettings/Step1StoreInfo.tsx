@@ -7,6 +7,7 @@ type Props = {
     storeName: string;
     storeDomain: string;
   };
+  onclickButton: (value: string) => void;
   questionFormData: { entityType?: string };
   formErrors: Record<string, string>;
   onChange: (field: keyof FormDataType, value: string) => void;
@@ -16,9 +17,12 @@ type Props = {
 export default function Step1StoreInfo({
   formData,
   questionFormData,
+
   formErrors,
   onChange,
+  onclickButton,
   onEntityTypeChange,
+
 }: Props) {
   return (
     <div>
@@ -34,6 +38,11 @@ export default function Step1StoreInfo({
         type="text"
         value={formData.storeName}
         onChange={(e) => onChange("storeName", e.target.value)}
+        onPaste={(e) => {
+          e.preventDefault();
+          const pasteData = e.clipboardData.getData("text");
+          onChange("storeName", pasteData);
+        }}
         className={`w-full p-2 border rounded ${formErrors.storeName ? "border-red-500" : "border-gray-300"
           }`}
         placeholder="أدخل اسم المتجر"
@@ -62,15 +71,32 @@ export default function Step1StoreInfo({
             />
             <span className="text-gray-600">/testing.com</span>
           </div>
-          {formErrors.storeDomain && (
-            <>
-              <p className="text-red-600 mt-1">{formErrors.storeDomain}</p>
-              <button id="butn"></button>
-              <button></button>
-              <button></button>
+          <div className="flex gap-2 flex-wrap  p-2 ">
 
-            </>
-          )}
+            {formErrors.storeDomain && (
+              <>
+                <p className="text-red-600 mt-1">{formErrors.storeDomain}</p>
+                <p className="text-gray-600 mt-1">يمكنك تعديل او اختيار:</p>
+              </>
+            )}
+            <div className="flex gap-2 mt-0.5 ">
+              <button id="butn" className="text-blue-900 hover:underline cursor-pointer"
+                onClick={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  onclickButton(target.innerHTML);
+                }}></button>
+              <button id="butn" className="text-blue-900 hover:underline cursor-pointer"
+                onClick={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  onclickButton(target.innerHTML);
+                }}></button>
+              <button id="butn" className="text-blue-900 hover:underline cursor-pointer"
+                onClick={(e) => {
+                  const target = e.target as HTMLButtonElement;
+                  onclickButton(target.innerHTML);
+                }}></button>
+            </div>
+          </div>
         </>
       )}
 

@@ -52,22 +52,3 @@ export const PostAboutme = async function (hasBusinessExperience: boolean,
     }
 
 }
-
-export const CheckAboutme=async function () {
-    try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            throw new Error("No auth token found in localStorage");
-        }
-        const response = await axios.get(`${baseurl}/api/AboutYou/1`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error("Failed to fetch store readiness:", error);
-        throw error;
-    }
-
-}

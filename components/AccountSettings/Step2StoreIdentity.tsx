@@ -57,6 +57,7 @@ export default function Step2StoreIdentity({
             <div>
               <label className="block mb-2 font-semibold text-gray-700">
                 ما فئة تجارتكم
+                (اختياري)
               </label>
               <Select
                 isMulti

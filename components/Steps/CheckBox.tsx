@@ -23,8 +23,7 @@ function CheckBox({ options, checkedItems, setCheckedItems, setOption }: { setCh
         }).finally(() => {
             setLoadnin(false)
         })
-
-    }, [])
+    }, [Router, setOption]);
     return (
         <div className="mb-10 p-4">
             {loading ?
